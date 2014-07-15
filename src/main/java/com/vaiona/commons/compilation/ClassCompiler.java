@@ -19,8 +19,8 @@ import javax.tools.ToolProvider;
  */
 public class ClassCompiler {
     private List<JavaFileObject> sources = new ArrayList<>();
-    private static final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-    private static final JavaFileManager fileManager = new InMemoryFileManager(compiler.getStandardFileManager(null, null, null));
+    private final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+    private final JavaFileManager fileManager = new InMemoryFileManager(compiler.getStandardFileManager(null, null, null));
     
     public ClassCompiler addSource(String className, String body){
         sources.add(new InMemorySourceFile(className, body));
@@ -34,6 +34,7 @@ public class ClassCompiler {
     // think of having the compiler, file manager or the whole class as static to save some 
     // compiler/ file, etc loading time. needs profiling
     public JavaFileManager compile(List<String> classes){
+        //((InMemoryFileManager)fileManager).reset();
         // check whether it is Java 8
         Boolean compiled = compiler
                 .getTask(null, fileManager, null, null, classes, sources)

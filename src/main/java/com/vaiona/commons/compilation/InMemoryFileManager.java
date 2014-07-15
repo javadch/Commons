@@ -18,7 +18,7 @@ public class InMemoryFileManager extends ForwardingJavaFileManager {
     * compiled bytecode of our class
     * Added support for multiple class object storage. Javad
     */
-    private Map<String, InMemoryCompiledObject> classObjects = new HashMap<>();
+    private Map<String, InMemoryCompiledObject> classObjects = null;
 
     private final ClassLoader loader = new InMemoryClassLoader();
 
@@ -30,6 +30,7 @@ public class InMemoryFileManager extends ForwardingJavaFileManager {
     */
     public InMemoryFileManager(StandardJavaFileManager standardManager) {
         super(standardManager);
+        classObjects = new HashMap<>();
     }
 
     /**
@@ -60,6 +61,10 @@ public class InMemoryFileManager extends ForwardingJavaFileManager {
     @Override
     public JavaFileObject getJavaFileForInput(Location location, String className, Kind kind) throws IOException    {
         return super.getJavaFileForInput(location, className, kind);
+    }
+
+    void reset() {
+        classObjects.clear();
     }
 
     public class InMemoryClassLoader extends SecureClassLoader{
