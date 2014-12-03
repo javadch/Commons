@@ -91,14 +91,15 @@ public class TypeSystem {
         return resultType;
     }
     
-    static { // configure conceptual types and thier parsing, evaluation counterparts for Java
-        types.put(TypeSystem.Boolean,    new DataTypeInfo(TypeSystem.Boolean, "Boolean.parseBoolean($data$)", "Boolean.compare($first$, $second$)"));
-        types.put(TypeSystem.Byte,       new DataTypeInfo(TypeSystem.Byte, "Byte.parseByte($data$)", "Boolean.compare($first$, $second$)"));
-        types.put(TypeSystem.String,     new DataTypeInfo(TypeSystem.String, "String.valueOf($data$)", "$first$.compareTo($second$)"));
-        types.put(TypeSystem.Integer,    new DataTypeInfo("Int", "Integer.parseInt($data$)", "Integer.compare($first$, $second$)"));
-        types.put(TypeSystem.Long,       new DataTypeInfo(TypeSystem.Long, "Long.parseLong($data$)", "Long.compare($first$, $second$)"));
-        types.put(TypeSystem.Real,       new DataTypeInfo("Double", "Double.parseDouble($data$)", "Double.compare($first$, $second$)"));
-        types.put(TypeSystem.Date,       new DataTypeInfo(TypeSystem.Date, "(new SimpleDateFormat(\"yyyy-MM-dd'T'HH:mm:ssX\")).parse($data$)", "$first$.compareTo($second$)"));             
+    static { // configure conceptual types and thier parsing, evaluation counterparts for Java 
+        
+        types.put(TypeSystem.Boolean,    new DataTypeInfo(TypeSystem.Boolean, "Boolean.parseBoolean($data$)", "Boolean.compare($first$, $second$)", "boolean"));
+        types.put(TypeSystem.Byte,       new DataTypeInfo(TypeSystem.Byte, "Byte.parseByte($data$)", "Boolean.compare($first$, $second$)", "Byte"));
+        types.put(TypeSystem.String,     new DataTypeInfo(TypeSystem.String, "String.valueOf($data$)", "$first$.compareTo($second$)", "String"));
+        types.put(TypeSystem.Integer,    new DataTypeInfo(TypeSystem.Integer, "Integer.parseInt($data$)", "Integer.compare($first$, $second$)", "int"));
+        types.put(TypeSystem.Long,       new DataTypeInfo(TypeSystem.Long, "Long.parseLong($data$)", "Long.compare($first$, $second$)", "long"));
+        types.put(TypeSystem.Real,       new DataTypeInfo(TypeSystem.Real, "Double.parseDouble($data$)", "Double.compare($first$, $second$)", "Double"));
+        types.put(TypeSystem.Date,       new DataTypeInfo(TypeSystem.Date, "(new SimpleDateFormat(\"yyyy-MM-dd'T'HH:mm:ssX\")).parse($data$)", "$first$.compareTo($second$)", "Date"));             
         // candidates: Decimal, Geometry
     }
     
