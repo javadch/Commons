@@ -10,6 +10,8 @@
 
 package com.vaiona.commons.data;
 
+import com.vaiona.commons.types.TypeSystem;
+
 /**
  *
  * @author standard
@@ -24,6 +26,10 @@ public class FieldInfo {
     //private String format = null;
     
     public String name = "";
+    public String conceptualDataType = TypeSystem.Unknown;    
     public String internalDataType = UNKOWN_TYPE;
     public int index = 0;
+    // its the object the field or the attribute is constructed from! usually it is a
+    // PerspectiveAttribute but to keep the common library independent from the domain, its declared as an Object.
+    public Object reference;
 }

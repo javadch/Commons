@@ -16,8 +16,10 @@ import java.util.List;
 public class AttributeInfo extends FieldInfo {
     // Data type is the data type defined in the adpater usable in Java and mapp-able to the underlying data
     // Type ref is the type declared by the query
-    public String formalDataType = "";
+
     public String forwardMap = "";
     public String forwardMapTranslated = "";
     public List<String> fields = new ArrayList<>();
+    public String runtimeType;
+    public String joinSide;
 }
