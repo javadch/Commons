@@ -1,12 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- *//*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package com.vaiona.commons.types;
 
@@ -19,20 +10,21 @@ import java.util.Optional;
 
 /**
  *
- * @author standard
+ * @author Javad Chamanara
  */
 public class TypeSystem {
-    public static final String Boolean = "Boolean";
-    public static final String Byte = "Byte";
-    public static final String String = "String";
-    public static final String Integer = "Integer";
-    public static final String Long = "Long";
-    public static final String Real = "Real";
-    public static final String Date = "Date";
-    public static final String Unknown = "Unknown";
-    public static final String Invalid = "Invalid";    
-    public static final String DontCare = "*";
-
+    public class TypeName {
+        public static final String Boolean = "Boolean";
+        public static final String Byte = "Byte";
+        public static final String String = "String";
+        public static final String Integer = "Integer";
+        public static final String Long = "Long";
+        public static final String Real = "Real";
+        public static final String Date = "Date";
+        public static final String Unknown = "Unknown";
+        public static final String Invalid = "Invalid";    
+        public static final String DontCare = "*";
+    }
     private static final Map<String, DataTypeInfo> types = new HashMap<>();
     private static final List<ResultTypeInfo> resultTypeTable = new ArrayList<>();
     
@@ -52,7 +44,7 @@ public class TypeSystem {
         if(!match.isPresent()){
             match = resultTypeTable.stream().filter(
                     p ->    p.getOp1Type().equalsIgnoreCase(op1Type)
-                    &&      p.getOp2Type().equalsIgnoreCase(TypeSystem.DontCare)
+                    &&      p.getOp2Type().equalsIgnoreCase(TypeSystem.TypeName.DontCare)
                     &&      p.getOperator().equalsIgnoreCase(operator)
                     &&      p.isIsUnary() == isUnary
                 ).findFirst();
@@ -60,7 +52,7 @@ public class TypeSystem {
         // check whether */op2/op/isUnary exists
         else if(!match.isPresent()){
             match = resultTypeTable.stream().filter(
-                    p ->    p.getOp1Type().equalsIgnoreCase(TypeSystem.DontCare)
+                    p ->    p.getOp1Type().equalsIgnoreCase(TypeSystem.TypeName.DontCare)
                     &&      p.getOp2Type().equalsIgnoreCase(op2Type)
                     &&      p.getOperator().equalsIgnoreCase(operator)
                     &&      p.isIsUnary() == isUnary
@@ -69,8 +61,8 @@ public class TypeSystem {
         // check whether */*/op/isUnary exists
         else if(!match.isPresent()){
             match = resultTypeTable.stream().filter(
-                    p ->    p.getOp1Type().equalsIgnoreCase(TypeSystem.DontCare)
-                    &&      p.getOp2Type().equalsIgnoreCase(TypeSystem.DontCare)
+                    p ->    p.getOp1Type().equalsIgnoreCase(TypeSystem.TypeName.DontCare)
+                    &&      p.getOp2Type().equalsIgnoreCase(TypeSystem.TypeName.DontCare)
                     &&      p.getOperator().equalsIgnoreCase(operator)
                     &&      p.isIsUnary() == isUnary
                 ).findFirst();
@@ -78,7 +70,7 @@ public class TypeSystem {
         // with care: if noy found swap op1Typ1 and op2Type and do the procedure again. in case consider sawping #1 and #2 also.
         // if all fail, return Unknown type
         if(!match.isPresent()){
-            return TypeSystem.Unknown;
+            return TypeSystem.TypeName.Unknown;
         }
         // when found see whether the resulttype is: #1, #2, or a type. #1 means return the op1Type, #2 means return op2Type, otherwise the specific type should be returned.
         String resultType = match.get().getResultType();
@@ -93,234 +85,234 @@ public class TypeSystem {
     
     static { // configure conceptual types and thier parsing, evaluation counterparts for Java 
         
-        types.put(TypeSystem.Boolean,    new DataTypeInfo(TypeSystem.Boolean, "Boolean.parseBoolean($data$)", "Boolean.compare($first$, $second$)", "boolean"));
-        types.put(TypeSystem.Byte,       new DataTypeInfo(TypeSystem.Byte, "Byte.parseByte($data$)", "Boolean.compare($first$, $second$)", "Byte"));
-        types.put(TypeSystem.String,     new DataTypeInfo(TypeSystem.String, "String.valueOf($data$)", "$first$.compareTo($second$)", "String"));
-        types.put(TypeSystem.Integer,    new DataTypeInfo(TypeSystem.Integer, "Integer.parseInt($data$)", "Integer.compare($first$, $second$)", "int"));
-        types.put(TypeSystem.Long,       new DataTypeInfo(TypeSystem.Long, "Long.parseLong($data$)", "Long.compare($first$, $second$)", "long"));
-        types.put(TypeSystem.Real,       new DataTypeInfo(TypeSystem.Real, "Double.parseDouble($data$)", "Double.compare($first$, $second$)", "Double"));
-        types.put(TypeSystem.Date,       new DataTypeInfo(TypeSystem.Date, "(new SimpleDateFormat(\"yyyy-MM-dd'T'HH:mm:ssX\")).parse($data$)", "$first$.compareTo($second$)", "Date"));             
+        types.put(TypeSystem.TypeName.Boolean,    new DataTypeInfo(TypeSystem.TypeName.Boolean, "Boolean.parseBoolean($data$)", "Boolean.compare($first$, $second$)", "boolean"));
+        types.put(TypeSystem.TypeName.Byte,       new DataTypeInfo(TypeSystem.TypeName.Byte, "Byte.parseByte($data$)", "Boolean.compare($first$, $second$)", "Byte"));
+        types.put(TypeSystem.TypeName.String,     new DataTypeInfo(TypeSystem.TypeName.String, "String.valueOf($data$)", "$first$.compareTo($second$)", "String"));
+        types.put(TypeSystem.TypeName.Integer,    new DataTypeInfo(TypeSystem.TypeName.Integer, "Integer.parseInt($data$)", "Integer.compare($first$, $second$)", "int"));
+        types.put(TypeSystem.TypeName.Long,       new DataTypeInfo(TypeSystem.TypeName.Long, "Long.parseLong($data$)", "Long.compare($first$, $second$)", "long"));
+        types.put(TypeSystem.TypeName.Real,       new DataTypeInfo(TypeSystem.TypeName.Real, "Double.parseDouble($data$)", "Double.compare($first$, $second$)", "Double"));
+        types.put(TypeSystem.TypeName.Date,       new DataTypeInfo(TypeSystem.TypeName.Date, "(new SimpleDateFormat(\"yyyy-MM-dd'T'HH:mm:ssX\")).parse($data$)", "$first$.compareTo($second$)", "Date"));             
         // candidates: Decimal, Geometry
     }
     
     static { // setup the result type determination table 
         
         //unary plus, the second operator is not used, but its set as the first one for simplicity in the search
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Unknown,   TypeSystem.Unknown,  "+",    true,   TypeSystem.Real,     "(+ (op1))",  ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Boolean,   TypeSystem.Boolean,  "+",    true,   TypeSystem.Byte,     "(+ (op1))",  ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.String,    TypeSystem.String,   "+",    true,   TypeSystem.Invalid,  "",         "Unary plus does not apply to String."));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.DontCare,         TypeSystem.DontCare,        "+",    true,   "#1",       "(+ (op1))",  ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Unknown,   TypeSystem.TypeName.Unknown,  "+",    true,   TypeSystem.TypeName.Real,     "(+ (op1))",  ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Boolean,   TypeSystem.TypeName.Boolean,  "+",    true,   TypeSystem.TypeName.Byte,     "(+ (op1))",  ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.String,    TypeSystem.TypeName.String,   "+",    true,   TypeSystem.TypeName.Invalid,  "",         "Unary plus does not apply to String."));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.DontCare,         TypeSystem.TypeName.DontCare,        "+",    true,   "#1",       "(+ (op1))",  ""));
 
         //unary minus, the second operator is not used, but its set as the first one for simplicity in the search
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Unknown,   TypeSystem.Unknown,  "-",    true,   TypeSystem.Real,     "(-(op1))",  ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Boolean,   TypeSystem.Boolean,  "-",    true,   TypeSystem.Byte,     "(-(op1))",  ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.String, TypeSystem.String, "-", true, TypeSystem.Invalid, "", "Unary minus does not apply to String."));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Date, TypeSystem.Date, "-", true, TypeSystem.Invalid, "", "Unary minus does not apply to String."));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.DontCare, TypeSystem.DontCare, "-", true, "#1", "(-(op1))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Unknown,   TypeSystem.TypeName.Unknown,  "-",    true,   TypeSystem.TypeName.Real,     "(-(op1))",  ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Boolean,   TypeSystem.TypeName.Boolean,  "-",    true,   TypeSystem.TypeName.Byte,     "(-(op1))",  ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.String, TypeSystem.TypeName.String, "-", true, TypeSystem.TypeName.Invalid, "", "Unary minus does not apply to String."));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Date, TypeSystem.TypeName.Date, "-", true, TypeSystem.TypeName.Invalid, "", "Unary minus does not apply to String."));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.DontCare, TypeSystem.TypeName.DontCare, "-", true, "#1", "(-(op1))", ""));
         
         // Add (+), it is symetric
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Unknown, TypeSystem.DontCare, "+", false, TypeSystem.Real, "((op1) + (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.DontCare, TypeSystem.Unknown, "+", false, TypeSystem.Real, "((op1) + (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Unknown, TypeSystem.TypeName.DontCare, "+", false, TypeSystem.TypeName.Real, "((op1) + (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.DontCare, TypeSystem.TypeName.Unknown, "+", false, TypeSystem.TypeName.Real, "((op1) + (op2))", ""));
 
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Boolean, TypeSystem.Boolean, "+", false, TypeSystem.Byte, "((op1) + (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Boolean, TypeSystem.DontCare, "+", false, "#2", "((op1) + (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Boolean, TypeSystem.TypeName.Boolean, "+", false, TypeSystem.TypeName.Byte, "((op1) + (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Boolean, TypeSystem.TypeName.DontCare, "+", false, "#2", "((op1) + (op2))", ""));
         
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Byte, TypeSystem.Boolean, "+", false, TypeSystem.Byte, "((op1) + (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Byte, TypeSystem.DontCare, "+", false, "#2", "((op1) + (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Byte, TypeSystem.TypeName.Boolean, "+", false, TypeSystem.TypeName.Byte, "((op1) + (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Byte, TypeSystem.TypeName.DontCare, "+", false, "#2", "((op1) + (op2))", ""));
         
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.String, TypeSystem.DontCare, "+", false, TypeSystem.String, "((op1) + (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.DontCare, TypeSystem.String, "+", false, TypeSystem.String, "((op1) + (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.String, TypeSystem.TypeName.DontCare, "+", false, TypeSystem.TypeName.String, "((op1) + (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.DontCare, TypeSystem.TypeName.String, "+", false, TypeSystem.TypeName.String, "((op1) + (op2))", ""));
         
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Integer, TypeSystem.Boolean, "+", false, TypeSystem.Integer, "((op1) + (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Integer, TypeSystem.Byte, "+", false, TypeSystem.Integer, "((op1) + (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Integer, TypeSystem.DontCare, "+", false, "#2", "((op1) + (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Integer, TypeSystem.TypeName.Boolean, "+", false, TypeSystem.TypeName.Integer, "((op1) + (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Integer, TypeSystem.TypeName.Byte, "+", false, TypeSystem.TypeName.Integer, "((op1) + (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Integer, TypeSystem.TypeName.DontCare, "+", false, "#2", "((op1) + (op2))", ""));
 
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Long, TypeSystem.Boolean, "+", false, TypeSystem.Long, "((op1) + (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Long, TypeSystem.Byte, "+", false, TypeSystem.Long, "((op1) + (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Long, TypeSystem.Integer, "+", false, TypeSystem.Long, "((op1) + (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Long, TypeSystem.DontCare, "+", false, "#2", "((op1) + (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Long, TypeSystem.TypeName.Boolean, "+", false, TypeSystem.TypeName.Long, "((op1) + (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Long, TypeSystem.TypeName.Byte, "+", false, TypeSystem.TypeName.Long, "((op1) + (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Long, TypeSystem.TypeName.Integer, "+", false, TypeSystem.TypeName.Long, "((op1) + (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Long, TypeSystem.TypeName.DontCare, "+", false, "#2", "((op1) + (op2))", ""));
 
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Real, TypeSystem.String, "+", false, TypeSystem.String, "((op1) + (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Real, TypeSystem.DontCare, "+", false, TypeSystem.Real, "((op1) + (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Real, TypeSystem.Date, "+", false, TypeSystem.Date, "((op1) + (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Real, TypeSystem.TypeName.String, "+", false, TypeSystem.TypeName.String, "((op1) + (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Real, TypeSystem.TypeName.DontCare, "+", false, TypeSystem.TypeName.Real, "((op1) + (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Real, TypeSystem.TypeName.Date, "+", false, TypeSystem.TypeName.Date, "((op1) + (op2))", ""));
 
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Date, TypeSystem.String, "+", false, TypeSystem.String, "((op1) + (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Date, TypeSystem.DontCare, "+", false, TypeSystem.Date, "((op1) + (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.DontCare, TypeSystem.Date, "+", false, TypeSystem.Date, "((op1) + (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Date, TypeSystem.TypeName.String, "+", false, TypeSystem.TypeName.String, "((op1) + (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Date, TypeSystem.TypeName.DontCare, "+", false, TypeSystem.TypeName.Date, "((op1) + (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.DontCare, TypeSystem.TypeName.Date, "+", false, TypeSystem.TypeName.Date, "((op1) + (op2))", ""));
         
         // Sub (-),
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Unknown, TypeSystem.DontCare, "-", false, TypeSystem.Real, "((op1) - (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.DontCare, TypeSystem.Unknown, "-", false, TypeSystem.Real, "((op1) - (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Unknown, TypeSystem.TypeName.DontCare, "-", false, TypeSystem.TypeName.Real, "((op1) - (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.DontCare, TypeSystem.TypeName.Unknown, "-", false, TypeSystem.TypeName.Real, "((op1) - (op2))", ""));
 
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Boolean, TypeSystem.Boolean, "-", false, TypeSystem.Byte, "((op1) - (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Boolean, TypeSystem.String, "-", false, TypeSystem.Invalid, "", ""));       
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Boolean, TypeSystem.DontCare, "-", false, "#2", "((op1) - (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Boolean, TypeSystem.TypeName.Boolean, "-", false, TypeSystem.TypeName.Byte, "((op1) - (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Boolean, TypeSystem.TypeName.String, "-", false, TypeSystem.TypeName.Invalid, "", ""));       
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Boolean, TypeSystem.TypeName.DontCare, "-", false, "#2", "((op1) - (op2))", ""));
         
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Byte, TypeSystem.Boolean, "-", false, TypeSystem.Byte, "((op1) - (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Byte, TypeSystem.String, "-", false, TypeSystem.Invalid, "", ""));       
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Byte, TypeSystem.DontCare, "-", false, "#2", "((op1) - (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Byte, TypeSystem.TypeName.Boolean, "-", false, TypeSystem.TypeName.Byte, "((op1) - (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Byte, TypeSystem.TypeName.String, "-", false, TypeSystem.TypeName.Invalid, "", ""));       
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Byte, TypeSystem.TypeName.DontCare, "-", false, "#2", "((op1) - (op2))", ""));
         
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.String, TypeSystem.String, "-", false, TypeSystem.String, "((op1) - (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.String, TypeSystem.Date, "-", false, TypeSystem.Date, "((op1) - (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.String, TypeSystem.DontCare, "-", false, TypeSystem.Invalid, "", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.DontCare, TypeSystem.String, "-", false, TypeSystem.Invalid, "", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.String, TypeSystem.TypeName.String, "-", false, TypeSystem.TypeName.String, "((op1) - (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.String, TypeSystem.TypeName.Date, "-", false, TypeSystem.TypeName.Date, "((op1) - (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.String, TypeSystem.TypeName.DontCare, "-", false, TypeSystem.TypeName.Invalid, "", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.DontCare, TypeSystem.TypeName.String, "-", false, TypeSystem.TypeName.Invalid, "", ""));
         
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Integer, TypeSystem.Boolean, "-", false, TypeSystem.Integer, "((op1) - (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Integer, TypeSystem.Byte, "-", false, TypeSystem.Integer, "((op1) - (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Integer, TypeSystem.String, "-", false, TypeSystem.Invalid, "", ""));       
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Integer, TypeSystem.DontCare, "-", false, "#2", "((op1) - (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Integer, TypeSystem.TypeName.Boolean, "-", false, TypeSystem.TypeName.Integer, "((op1) - (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Integer, TypeSystem.TypeName.Byte, "-", false, TypeSystem.TypeName.Integer, "((op1) - (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Integer, TypeSystem.TypeName.String, "-", false, TypeSystem.TypeName.Invalid, "", ""));       
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Integer, TypeSystem.TypeName.DontCare, "-", false, "#2", "((op1) - (op2))", ""));
 
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Long, TypeSystem.Boolean, "-", false, TypeSystem.Long, "((op1) - (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Long, TypeSystem.Byte, "-", false, TypeSystem.Long, "((op1) - (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Long, TypeSystem.Integer, "-", false, TypeSystem.Long, "((op1) - (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Long, TypeSystem.String, "-", false, TypeSystem.Invalid, "", ""));       
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Long, TypeSystem.DontCare, "+", false, "#2", "((op1) - (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Long, TypeSystem.TypeName.Boolean, "-", false, TypeSystem.TypeName.Long, "((op1) - (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Long, TypeSystem.TypeName.Byte, "-", false, TypeSystem.TypeName.Long, "((op1) - (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Long, TypeSystem.TypeName.Integer, "-", false, TypeSystem.TypeName.Long, "((op1) - (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Long, TypeSystem.TypeName.String, "-", false, TypeSystem.TypeName.Invalid, "", ""));       
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Long, TypeSystem.TypeName.DontCare, "+", false, "#2", "((op1) - (op2))", ""));
 
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Real, TypeSystem.String, "-", false, TypeSystem.Invalid, "", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Real, TypeSystem.DontCare, "-", false, TypeSystem.Real, "((op1) - (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Real, TypeSystem.Date, "-", false, TypeSystem.Date, "((op1) - (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Real, TypeSystem.TypeName.String, "-", false, TypeSystem.TypeName.Invalid, "", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Real, TypeSystem.TypeName.DontCare, "-", false, TypeSystem.TypeName.Real, "((op1) - (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Real, TypeSystem.TypeName.Date, "-", false, TypeSystem.TypeName.Date, "((op1) - (op2))", ""));
 
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Date, TypeSystem.DontCare, "-", false, TypeSystem.Date, "((op1) - (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.DontCare, TypeSystem.Date, "-", false, TypeSystem.Date, "((op1) - (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Date, TypeSystem.TypeName.DontCare, "-", false, TypeSystem.TypeName.Date, "((op1) - (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.DontCare, TypeSystem.TypeName.Date, "-", false, TypeSystem.TypeName.Date, "((op1) - (op2))", ""));
         
         // Mul (*), it is symetric
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Unknown, TypeSystem.DontCare, "*", false, TypeSystem.Real, "((op1) * (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.DontCare, TypeSystem.Unknown, "*", false, TypeSystem.Real, "((op1) * (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Unknown, TypeSystem.TypeName.DontCare, "*", false, TypeSystem.TypeName.Real, "((op1) * (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.DontCare, TypeSystem.TypeName.Unknown, "*", false, TypeSystem.TypeName.Real, "((op1) * (op2))", ""));
 
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Boolean, TypeSystem.Boolean, "*", false, TypeSystem.Byte, "((op1) * (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Boolean, TypeSystem.String, "*", false, TypeSystem.Invalid, "", ""));       
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Boolean, TypeSystem.DontCare, "*", false, "#2", "((op1) * (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Boolean, TypeSystem.TypeName.Boolean, "*", false, TypeSystem.TypeName.Byte, "((op1) * (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Boolean, TypeSystem.TypeName.String, "*", false, TypeSystem.TypeName.Invalid, "", ""));       
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Boolean, TypeSystem.TypeName.DontCare, "*", false, "#2", "((op1) * (op2))", ""));
         
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Byte, TypeSystem.Boolean, "*", false, TypeSystem.Byte, "((op1) * (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Byte, TypeSystem.String, "*", false, TypeSystem.Invalid, "", ""));       
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Byte, TypeSystem.DontCare, "*", false, "#2", "((op1) * (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Byte, TypeSystem.TypeName.Boolean, "*", false, TypeSystem.TypeName.Byte, "((op1) * (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Byte, TypeSystem.TypeName.String, "*", false, TypeSystem.TypeName.Invalid, "", ""));       
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Byte, TypeSystem.TypeName.DontCare, "*", false, "#2", "((op1) * (op2))", ""));
         
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.String, TypeSystem.DontCare, "*", false, TypeSystem.Invalid, "", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.DontCare, TypeSystem.String, "*", false, TypeSystem.Invalid, "", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.String, TypeSystem.TypeName.DontCare, "*", false, TypeSystem.TypeName.Invalid, "", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.DontCare, TypeSystem.TypeName.String, "*", false, TypeSystem.TypeName.Invalid, "", ""));
         
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Integer, TypeSystem.Boolean, "*", false, TypeSystem.Integer, "((op1) * (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Integer, TypeSystem.Byte, "*", false, TypeSystem.Long, "((op1) * (op2))", ""));
-        //resultTypeTable.add(new ResultTypeInfo(TypeSystem.Integer, TypeSystem.String, "*", false, TypeSystem.Invalid, "", ""));       
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Integer, TypeSystem.Integer, "*", false, TypeSystem.Long, "((op1) * (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Integer, TypeSystem.Long, "*", false, TypeSystem.Long, "((op1) * (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Integer, TypeSystem.Real, "*", false, TypeSystem.Real, "((op1) * (op2))", ""));
-        //resultTypeTable.add(new ResultTypeInfo(TypeSystem.Integer, TypeSystem.Date, "*", false, TypeSystem.Invalid, "", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Integer, TypeSystem.TypeName.Boolean, "*", false, TypeSystem.TypeName.Integer, "((op1) * (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Integer, TypeSystem.TypeName.Byte, "*", false, TypeSystem.TypeName.Long, "((op1) * (op2))", ""));
+        //resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Integer, TypeSystem.TypeName.String, "*", false, TypeSystem.TypeName.Invalid, "", ""));       
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Integer, TypeSystem.TypeName.Integer, "*", false, TypeSystem.TypeName.Long, "((op1) * (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Integer, TypeSystem.TypeName.Long, "*", false, TypeSystem.TypeName.Long, "((op1) * (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Integer, TypeSystem.TypeName.Real, "*", false, TypeSystem.TypeName.Real, "((op1) * (op2))", ""));
+        //resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Integer, TypeSystem.TypeName.Date, "*", false, TypeSystem.TypeName.Invalid, "", ""));
 
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Long, TypeSystem.Boolean, "*", false, TypeSystem.Long, "((op1) * (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Long, TypeSystem.Byte, "*", false, TypeSystem.Long, "((op1) * (op2))", ""));
-        //resultTypeTable.add(new ResultTypeInfo(TypeSystem.Long, TypeSystem.String, "*", false, TypeSystem.Invalid, "", ""));       
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Long, TypeSystem.Integer, "*", false, TypeSystem.Long, "((op1) * (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Long, TypeSystem.Long, "*", false, TypeSystem.Long, "((op1) * (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Long, TypeSystem.Real, "*", false, TypeSystem.Real, "((op1) * (op2))", ""));
-        //resultTypeTable.add(new ResultTypeInfo(TypeSystem.Long, TypeSystem.Date, "*", false, TypeSystem.Invalid, "", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Long, TypeSystem.TypeName.Boolean, "*", false, TypeSystem.TypeName.Long, "((op1) * (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Long, TypeSystem.TypeName.Byte, "*", false, TypeSystem.TypeName.Long, "((op1) * (op2))", ""));
+        //resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Long, TypeSystem.TypeName.String, "*", false, TypeSystem.TypeName.Invalid, "", ""));       
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Long, TypeSystem.TypeName.Integer, "*", false, TypeSystem.TypeName.Long, "((op1) * (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Long, TypeSystem.TypeName.Long, "*", false, TypeSystem.TypeName.Long, "((op1) * (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Long, TypeSystem.TypeName.Real, "*", false, TypeSystem.TypeName.Real, "((op1) * (op2))", ""));
+        //resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Long, TypeSystem.TypeName.Date, "*", false, TypeSystem.TypeName.Invalid, "", ""));
 
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Real, TypeSystem.String, "*", false, TypeSystem.Invalid, "", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Real, TypeSystem.Date, "*", false, TypeSystem.Invalid, "", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Real, TypeSystem.DontCare, "*", false, TypeSystem.Real, "((op1) * (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Real, TypeSystem.TypeName.String, "*", false, TypeSystem.TypeName.Invalid, "", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Real, TypeSystem.TypeName.Date, "*", false, TypeSystem.TypeName.Invalid, "", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Real, TypeSystem.TypeName.DontCare, "*", false, TypeSystem.TypeName.Real, "((op1) * (op2))", ""));
 
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Date, TypeSystem.DontCare, "*", false, TypeSystem.Invalid, "", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.DontCare, TypeSystem.Date, "*", false, TypeSystem.Invalid, "", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Date, TypeSystem.TypeName.DontCare, "*", false, TypeSystem.TypeName.Invalid, "", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.DontCare, TypeSystem.TypeName.Date, "*", false, TypeSystem.TypeName.Invalid, "", ""));
         
         // Div (/), it is symetric
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Unknown, TypeSystem.DontCare, "/", false, TypeSystem.Real, "((op1) / (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.DontCare, TypeSystem.Unknown, "/", false, TypeSystem.Real, "((op1) / (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Unknown, TypeSystem.TypeName.DontCare, "/", false, TypeSystem.TypeName.Real, "((op1) / (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.DontCare, TypeSystem.TypeName.Unknown, "/", false, TypeSystem.TypeName.Real, "((op1) / (op2))", ""));
 
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Boolean, TypeSystem.Boolean, "/", false, TypeSystem.Byte, "((op1) / (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Boolean, TypeSystem.String, "/", false, TypeSystem.Invalid, "", ""));       
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Boolean, TypeSystem.Date, "/", false, TypeSystem.Invalid, "", ""));       
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Boolean, TypeSystem.DontCare, "/", false, TypeSystem.Real, "((op1) / (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Boolean, TypeSystem.TypeName.Boolean, "/", false, TypeSystem.TypeName.Byte, "((op1) / (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Boolean, TypeSystem.TypeName.String, "/", false, TypeSystem.TypeName.Invalid, "", ""));       
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Boolean, TypeSystem.TypeName.Date, "/", false, TypeSystem.TypeName.Invalid, "", ""));       
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Boolean, TypeSystem.TypeName.DontCare, "/", false, TypeSystem.TypeName.Real, "((op1) / (op2))", ""));
         
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Byte, TypeSystem.Boolean, "/", false, TypeSystem.Byte, "((op1) / (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Byte, TypeSystem.String, "/", false, TypeSystem.Invalid, "", ""));       
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Byte, TypeSystem.Date, "/", false, TypeSystem.Invalid, "", ""));       
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Byte, TypeSystem.DontCare, "/", false, TypeSystem.Real, "((op1) / (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Byte, TypeSystem.TypeName.Boolean, "/", false, TypeSystem.TypeName.Byte, "((op1) / (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Byte, TypeSystem.TypeName.String, "/", false, TypeSystem.TypeName.Invalid, "", ""));       
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Byte, TypeSystem.TypeName.Date, "/", false, TypeSystem.TypeName.Invalid, "", ""));       
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Byte, TypeSystem.TypeName.DontCare, "/", false, TypeSystem.TypeName.Real, "((op1) / (op2))", ""));
         
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.String, TypeSystem.DontCare, "/", false, TypeSystem.Invalid, "", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.DontCare, TypeSystem.String, "/", false, TypeSystem.Invalid, "", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.String, TypeSystem.TypeName.DontCare, "/", false, TypeSystem.TypeName.Invalid, "", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.DontCare, TypeSystem.TypeName.String, "/", false, TypeSystem.TypeName.Invalid, "", ""));
         
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Integer, TypeSystem.Byte, "/", false, TypeSystem.Real, "((op1) / (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Integer, TypeSystem.Integer, "/", false, TypeSystem.Real, "((op1) / (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Integer, TypeSystem.Long, "/", false, TypeSystem.Real, "((op1) / (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Integer, TypeSystem.Real, "/", false, TypeSystem.Real, "((op1) / (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Integer, TypeSystem.TypeName.Byte, "/", false, TypeSystem.TypeName.Real, "((op1) / (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Integer, TypeSystem.TypeName.Integer, "/", false, TypeSystem.TypeName.Real, "((op1) / (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Integer, TypeSystem.TypeName.Long, "/", false, TypeSystem.TypeName.Real, "((op1) / (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Integer, TypeSystem.TypeName.Real, "/", false, TypeSystem.TypeName.Real, "((op1) / (op2))", ""));
 
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Long, TypeSystem.Byte, "/", false, TypeSystem.Real, "((op1) / (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Long, TypeSystem.Integer, "/", false, TypeSystem.Real, "((op1) / (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Long, TypeSystem.Long, "/", false, TypeSystem.Real, "((op1) / (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Long, TypeSystem.Real, "/", false, TypeSystem.Real, "((op1) / (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Long, TypeSystem.TypeName.Byte, "/", false, TypeSystem.TypeName.Real, "((op1) / (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Long, TypeSystem.TypeName.Integer, "/", false, TypeSystem.TypeName.Real, "((op1) / (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Long, TypeSystem.TypeName.Long, "/", false, TypeSystem.TypeName.Real, "((op1) / (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Long, TypeSystem.TypeName.Real, "/", false, TypeSystem.TypeName.Real, "((op1) / (op2))", ""));
 
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Real, TypeSystem.Byte, "/", false, TypeSystem.Real, "((op1) / (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Real, TypeSystem.Integer, "/", false, TypeSystem.Real, "((op1) / (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Real, TypeSystem.Long, "/", false, TypeSystem.Real, "((op1) / (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Real, TypeSystem.Real, "/", false, TypeSystem.Real, "((op1) / (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Real, TypeSystem.TypeName.Byte, "/", false, TypeSystem.TypeName.Real, "((op1) / (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Real, TypeSystem.TypeName.Integer, "/", false, TypeSystem.TypeName.Real, "((op1) / (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Real, TypeSystem.TypeName.Long, "/", false, TypeSystem.TypeName.Real, "((op1) / (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Real, TypeSystem.TypeName.Real, "/", false, TypeSystem.TypeName.Real, "((op1) / (op2))", ""));
 
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Date, TypeSystem.DontCare, "/", false, TypeSystem.Invalid, "", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.DontCare, TypeSystem.Date, "/", false, TypeSystem.Invalid, "", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Date, TypeSystem.TypeName.DontCare, "/", false, TypeSystem.TypeName.Invalid, "", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.DontCare, TypeSystem.TypeName.Date, "/", false, TypeSystem.TypeName.Invalid, "", ""));
         
         // Mod (%), it is NOT symetric
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Unknown, TypeSystem.DontCare, "%", false, TypeSystem.Real, "((op1) % (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.DontCare, TypeSystem.Unknown, "%", false, TypeSystem.Real, "((op1) % (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Unknown, TypeSystem.TypeName.DontCare, "%", false, TypeSystem.TypeName.Real, "((op1) % (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.DontCare, TypeSystem.TypeName.Unknown, "%", false, TypeSystem.TypeName.Real, "((op1) % (op2))", ""));
 
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Boolean, TypeSystem.Boolean, "%", false, TypeSystem.Byte, "((op1) % (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Boolean, TypeSystem.String, "%", false, TypeSystem.Invalid, "", ""));       
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Boolean, TypeSystem.Date, "%", false, TypeSystem.Invalid, "", ""));   
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Boolean, TypeSystem.Real, "%", false, TypeSystem.Long, "((op1) % (op2))", ""));        
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Boolean, TypeSystem.DontCare, "%", false, "#2", "((op1) % (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Boolean, TypeSystem.TypeName.Boolean, "%", false, TypeSystem.TypeName.Byte, "((op1) % (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Boolean, TypeSystem.TypeName.String, "%", false, TypeSystem.TypeName.Invalid, "", ""));       
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Boolean, TypeSystem.TypeName.Date, "%", false, TypeSystem.TypeName.Invalid, "", ""));   
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Boolean, TypeSystem.TypeName.Real, "%", false, TypeSystem.TypeName.Long, "((op1) % (op2))", ""));        
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Boolean, TypeSystem.TypeName.DontCare, "%", false, "#2", "((op1) % (op2))", ""));
         
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Byte, TypeSystem.Boolean, "%", false, TypeSystem.Byte, "((op1) % (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Byte, TypeSystem.String, "%", false, TypeSystem.Invalid, "", ""));       
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Byte, TypeSystem.Date, "%", false, TypeSystem.Invalid, "", ""));       
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Byte, TypeSystem.Real, "%", false, TypeSystem.Long, "((op1) % (op2))", ""));        
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Byte, TypeSystem.DontCare, "%", false, "#2", "((op1) % (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Byte, TypeSystem.TypeName.Boolean, "%", false, TypeSystem.TypeName.Byte, "((op1) % (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Byte, TypeSystem.TypeName.String, "%", false, TypeSystem.TypeName.Invalid, "", ""));       
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Byte, TypeSystem.TypeName.Date, "%", false, TypeSystem.TypeName.Invalid, "", ""));       
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Byte, TypeSystem.TypeName.Real, "%", false, TypeSystem.TypeName.Long, "((op1) % (op2))", ""));        
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Byte, TypeSystem.TypeName.DontCare, "%", false, "#2", "((op1) % (op2))", ""));
         
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.String, TypeSystem.DontCare, "%", false, TypeSystem.Invalid, "", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.DontCare, TypeSystem.String, "%", false, TypeSystem.Invalid, "", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.String, TypeSystem.TypeName.DontCare, "%", false, TypeSystem.TypeName.Invalid, "", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.DontCare, TypeSystem.TypeName.String, "%", false, TypeSystem.TypeName.Invalid, "", ""));
         
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Integer, TypeSystem.Boolean, "%", false, TypeSystem.Byte, "((op1) % (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Integer, TypeSystem.String, "%", false, TypeSystem.Invalid, "", ""));       
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Integer, TypeSystem.Date, "%", false, TypeSystem.Invalid, "", ""));       
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Integer, TypeSystem.Real, "%", false, TypeSystem.Long, "((op1) % (op2))", ""));        
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Integer, TypeSystem.DontCare, "%", false, "#2", "((op1) % (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Integer, TypeSystem.TypeName.Boolean, "%", false, TypeSystem.TypeName.Byte, "((op1) % (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Integer, TypeSystem.TypeName.String, "%", false, TypeSystem.TypeName.Invalid, "", ""));       
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Integer, TypeSystem.TypeName.Date, "%", false, TypeSystem.TypeName.Invalid, "", ""));       
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Integer, TypeSystem.TypeName.Real, "%", false, TypeSystem.TypeName.Long, "((op1) % (op2))", ""));        
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Integer, TypeSystem.TypeName.DontCare, "%", false, "#2", "((op1) % (op2))", ""));
 
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Long, TypeSystem.Boolean, "%", false, TypeSystem.Byte, "((op1) % (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Long, TypeSystem.String, "%", false, TypeSystem.Invalid, "", ""));       
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Long, TypeSystem.Date, "%", false, TypeSystem.Invalid, "", ""));       
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Long, TypeSystem.Real, "%", false, TypeSystem.Long, "((op1) % (op2))", ""));        
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Long, TypeSystem.DontCare, "%", false, "#2", "((op1) % (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Long, TypeSystem.TypeName.Boolean, "%", false, TypeSystem.TypeName.Byte, "((op1) % (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Long, TypeSystem.TypeName.String, "%", false, TypeSystem.TypeName.Invalid, "", ""));       
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Long, TypeSystem.TypeName.Date, "%", false, TypeSystem.TypeName.Invalid, "", ""));       
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Long, TypeSystem.TypeName.Real, "%", false, TypeSystem.TypeName.Long, "((op1) % (op2))", ""));        
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Long, TypeSystem.TypeName.DontCare, "%", false, "#2", "((op1) % (op2))", ""));
 
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Real, TypeSystem.Boolean, "%", false, TypeSystem.Byte, "((op1) % (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Real, TypeSystem.String, "%", false, TypeSystem.Invalid, "", ""));       
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Real, TypeSystem.Date, "%", false, TypeSystem.Invalid, "", ""));       
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Real, TypeSystem.Real, "%", false, TypeSystem.Long, "((op1) % (op2))", ""));        
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Real, TypeSystem.DontCare, "%", false, "#2", "((op1) % (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Real, TypeSystem.TypeName.Boolean, "%", false, TypeSystem.TypeName.Byte, "((op1) % (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Real, TypeSystem.TypeName.String, "%", false, TypeSystem.TypeName.Invalid, "", ""));       
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Real, TypeSystem.TypeName.Date, "%", false, TypeSystem.TypeName.Invalid, "", ""));       
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Real, TypeSystem.TypeName.Real, "%", false, TypeSystem.TypeName.Long, "((op1) % (op2))", ""));        
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Real, TypeSystem.TypeName.DontCare, "%", false, "#2", "((op1) % (op2))", ""));
 
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.Date, TypeSystem.DontCare, "%", false, TypeSystem.Invalid, "", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.DontCare, TypeSystem.Date, "%", false, TypeSystem.Invalid, "", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Date, TypeSystem.TypeName.DontCare, "%", false, TypeSystem.TypeName.Invalid, "", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.DontCare, TypeSystem.TypeName.Date, "%", false, TypeSystem.TypeName.Invalid, "", ""));
         
         // Binary compariosn operators
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.DontCare, TypeSystem.DontCare, "eq", false, TypeSystem.Boolean, "((op1) == (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.DontCare, TypeSystem.DontCare, "noteq", false, TypeSystem.Boolean, "((op1) != (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.DontCare, TypeSystem.DontCare, "gt", false, TypeSystem.Boolean, "((op1) > (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.DontCare, TypeSystem.DontCare, "gteq", false, TypeSystem.Boolean, "((op1) >= (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.DontCare, TypeSystem.DontCare, "lt", false, TypeSystem.Boolean, "((op1) < (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.DontCare, TypeSystem.DontCare, "lteq", false, TypeSystem.Boolean, "((op1) <= (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.DontCare, TypeSystem.DontCare, "like", false, TypeSystem.Boolean, "((op1) ~ (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.DontCare, TypeSystem.TypeName.DontCare, "eq", false, TypeSystem.TypeName.Boolean, "((op1) == (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.DontCare, TypeSystem.TypeName.DontCare, "noteq", false, TypeSystem.TypeName.Boolean, "((op1) != (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.DontCare, TypeSystem.TypeName.DontCare, "gt", false, TypeSystem.TypeName.Boolean, "((op1) > (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.DontCare, TypeSystem.TypeName.DontCare, "gteq", false, TypeSystem.TypeName.Boolean, "((op1) >= (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.DontCare, TypeSystem.TypeName.DontCare, "lt", false, TypeSystem.TypeName.Boolean, "((op1) < (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.DontCare, TypeSystem.TypeName.DontCare, "lteq", false, TypeSystem.TypeName.Boolean, "((op1) <= (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.DontCare, TypeSystem.TypeName.DontCare, "like", false, TypeSystem.TypeName.Boolean, "((op1) ~ (op2))", ""));
 
         // unary comaprison operators
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.DontCare, TypeSystem.DontCare, "isnull", false, TypeSystem.Boolean, "((op1) == null)", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.DontCare, TypeSystem.DontCare, "isnotnull", false, TypeSystem.Boolean, "((op1) != null)", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.DontCare, TypeSystem.TypeName.DontCare, "isnull", false, TypeSystem.TypeName.Boolean, "((op1) == null)", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.DontCare, TypeSystem.TypeName.DontCare, "isnotnull", false, TypeSystem.TypeName.Boolean, "((op1) != null)", ""));
 
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.DontCare, TypeSystem.DontCare, "isnumber", false, TypeSystem.Boolean, "", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.DontCare, TypeSystem.DontCare, "isnotnumber", false, TypeSystem.Boolean, "", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.DontCare, TypeSystem.TypeName.DontCare, "isnumber", false, TypeSystem.TypeName.Boolean, "", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.DontCare, TypeSystem.TypeName.DontCare, "isnotnumber", false, TypeSystem.TypeName.Boolean, "", ""));
         
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.DontCare, TypeSystem.DontCare, "isdate", false, TypeSystem.Boolean, "", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.DontCare, TypeSystem.DontCare, "isnotdate", false, TypeSystem.Boolean, "", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.DontCare, TypeSystem.TypeName.DontCare, "isdate", false, TypeSystem.TypeName.Boolean, "", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.DontCare, TypeSystem.TypeName.DontCare, "isnotdate", false, TypeSystem.TypeName.Boolean, "", ""));
 
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.DontCare, TypeSystem.DontCare, "isempty", false, TypeSystem.Boolean, "", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.DontCare, TypeSystem.DontCare, "isnotempty", false, TypeSystem.Boolean, "", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.DontCare, TypeSystem.TypeName.DontCare, "isempty", false, TypeSystem.TypeName.Boolean, "", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.DontCare, TypeSystem.TypeName.DontCare, "isnotempty", false, TypeSystem.TypeName.Boolean, "", ""));
         
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.DontCare, TypeSystem.DontCare, "not", false, TypeSystem.Boolean, "(!(op1))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.DontCare, TypeSystem.DontCare, "and", false, TypeSystem.Boolean, "((op1) || (op2))", ""));
-        resultTypeTable.add(new ResultTypeInfo(TypeSystem.DontCare, TypeSystem.DontCare, "or", false, TypeSystem.Boolean, "((op1) && (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.DontCare, TypeSystem.TypeName.DontCare, "not", false, TypeSystem.TypeName.Boolean, "(!(op1))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.DontCare, TypeSystem.TypeName.DontCare, "and", false, TypeSystem.TypeName.Boolean, "((op1) || (op2))", ""));
+        resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.DontCare, TypeSystem.TypeName.DontCare, "or", false, TypeSystem.TypeName.Boolean, "((op1) && (op2))", ""));
         
     }
     

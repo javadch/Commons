@@ -26,7 +26,7 @@ public class FieldInfo {
     //private String format = null;
     
     public String name = "";
-    public String conceptualDataType = TypeSystem.Unknown;    
+    public String conceptualDataType = TypeSystem.TypeName.Unknown;    
     public String internalDataType = UNKOWN_TYPE;
     public int index = 0;
     // its the object the field or the attribute is constructed from! usually it is a
