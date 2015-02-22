@@ -76,9 +76,11 @@ public class TypeSystem {
         String resultType = match.get().getResultType();
         switch (resultType) {
             case "#1":
-                return match.get().getOp1Type();
+                //return match.get().getOp1Type();
+                return op1Type;
             case "#2":
-                return match.get().getOp2Type(); 
+                //return match.get().getOp2Type(); 
+                return op2Type;
         }
         return resultType;
     }
@@ -96,7 +98,7 @@ public class TypeSystem {
     }
     
     static { // setup the result type determination table 
-        
+        // one of the sources: https://msdn.microsoft.com/en-us/library/ms235255.aspx
         //unary plus, the second operator is not used, but its set as the first one for simplicity in the search
         resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Unknown,   TypeSystem.TypeName.Unknown,  "+",    true,   TypeSystem.TypeName.Real,     "(+ (op1))",  ""));
         resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Boolean,   TypeSystem.TypeName.Boolean,  "+",    true,   TypeSystem.TypeName.Byte,     "(+ (op1))",  ""));
@@ -130,6 +132,7 @@ public class TypeSystem {
         resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Long, TypeSystem.TypeName.Boolean, "+", false, TypeSystem.TypeName.Long, "((op1) + (op2))", ""));
         resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Long, TypeSystem.TypeName.Byte, "+", false, TypeSystem.TypeName.Long, "((op1) + (op2))", ""));
         resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Long, TypeSystem.TypeName.Integer, "+", false, TypeSystem.TypeName.Long, "((op1) + (op2))", ""));
+        //resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Long, TypeSystem.TypeName.Long, "+", false, TypeSystem.TypeName.Long, "((op1) + (op2))", ""));
         resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Long, TypeSystem.TypeName.DontCare, "+", false, "#2", "((op1) + (op2))", ""));
 
         resultTypeTable.add(new ResultTypeInfo(TypeSystem.TypeName.Real, TypeSystem.TypeName.String, "+", false, TypeSystem.TypeName.String, "((op1) + (op2))", ""));
