@@ -11,6 +11,7 @@ import com.vaiona.commons.data.AttributeInfo;
 import com.vaiona.commons.data.FieldInfo;
 import com.vaiona.commons.types.TypeSystem;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -62,7 +63,7 @@ public abstract class DataReaderBuilderBase {
         // in this case the resultEntityAttributes is populated for the result set schema and rowEntityAttributes is for the first phase data reading ...
         return rowEntityAttributes.size() > 0; 
     }
-    public DataReaderBuilderBase where(String whereClause, boolean isJoinMode){ 
+    public DataReaderBuilderBase where(String whereClause, boolean isJoinMode) throws Exception{ 
         this.whereClause = whereClause;
         // extract used attributes and put them in the pre population list
         extractUsedAttributes(whereClause, isJoinMode);
@@ -253,12 +254,17 @@ public abstract class DataReaderBuilderBase {
         
     protected abstract String translate(AttributeInfo attribute, boolean rightSide);
     
-    private void extractUsedAttributes(String expression, boolean isJoinMode) {
+    private void extractUsedAttributes(String expression, boolean isJoinMode) throws Exception {
         referencedAttributes.clear();
         for (StringTokenizer stringTokenizer = new StringTokenizer(expression, " ");
                 stringTokenizer.hasMoreTokens();) {
             String token = stringTokenizer.nextToken();
             if(hasAggregate()){
+                // non aggregate attributes apear in both row and result entities, so if an attribute apears in the result but not in the row 
+                // entity, it is an aggregate attribute.
+                if (resultEntityAttributes.containsKey(token) && rowEntityAttributes != null && !rowEntityAttributes.containsKey(token)){
+                    throw new Exception(MessageFormat.format("{0} is an aggregate attribute. Aggregate attributes can not be used in the WHERE clause. Consider using them in the HAVING clause.", token));
+                }
                 if (rowEntityAttributes.containsKey(token) && !referencedAttributes.containsKey(token)) {
                     referencedAttributes.put(token, rowEntityAttributes.get(token));
                 } else {
@@ -350,8 +356,7 @@ public abstract class DataReaderBuilderBase {
         if(baseClassName == null || baseClassName.isEmpty()){
             baseClassName = "C" + (new Date()).getTime();
         }
-        
-        
+                
         resultEntityContext.put("namespace", namespace);
         resultEntityContext.put("BaseClassName", baseClassName);
         resultEntityContext.put("Attributes", resultEntityAttributes.values().stream().collect(Collectors.toList()));        
@@ -371,8 +376,7 @@ public abstract class DataReaderBuilderBase {
         readerContext.put("joinType", ""); // to avoid null joinType in case of single containers.
         readerContext.put("joinOperator", "");            
         readerContext.put("leftJoinKey", "");
-        readerContext.put("rightJoinKey", "");        
-
+        readerContext.put("rightJoinKey", ""); 
     }
 
     protected void buildSingleSourceSegments() {
@@ -385,17 +389,22 @@ public abstract class DataReaderBuilderBase {
             // Single container does not have the Mid attributes
             // Post list contains all the other attributes except those in the Pre
             rowEntityContext.put("Post", postAttributes.values().stream().collect(Collectors.toList()));
+            
             // Post_Left and Post_Right should be emtpy in single container cases.
             List<AttributeInfo> leftOuterItems = postAttributes.values().stream()
                     .filter(p-> p.joinSide.equalsIgnoreCase("L"))
                     .collect(Collectors.toList());
-            leftOuterItems.addAll(orderItems.keySet().stream().filter(p-> !leftOuterItems.contains(p)).collect(Collectors.toList()));
+            if(!hasAggregate()){
+                leftOuterItems.addAll(orderItems.keySet().stream().filter(p-> !leftOuterItems.contains(p)).collect(Collectors.toList()));
+            }
             rowEntityContext.put("Post_Left", leftOuterItems);
 
             List<AttributeInfo> rightOuterItems = postAttributes.values().stream()
                     .filter(p-> p.joinSide.equalsIgnoreCase("R"))
                     .collect(Collectors.toList());
-            rightOuterItems.addAll(orderItems.keySet().stream().filter(p-> !rightOuterItems.contains(p)).collect(Collectors.toList()));
+            if(!hasAggregate()){
+                rightOuterItems.addAll(orderItems.keySet().stream().filter(p-> !rightOuterItems.contains(p)).collect(Collectors.toList()));
+            }
             rowEntityContext.put("Post_Right", rightOuterItems);
 
             resultEntityContext.put("Pre", null);
@@ -405,7 +414,7 @@ public abstract class DataReaderBuilderBase {
             resultEntityContext.put("Post_Left", null);
             resultEntityContext.put("Post_Right", null);
             
-            readerContext.put("GroupBY", groupByAttributes);
+            readerContext.put("GroupBy", groupByAttributes);
             
         } else {
             resultEntityContext.put("Pre", referencedAttributes.values().stream().collect(Collectors.toList()));

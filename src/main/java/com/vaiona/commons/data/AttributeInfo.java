@@ -22,4 +22,22 @@ public class AttributeInfo extends FieldInfo {
     public List<String> fields = new ArrayList<>();
     public String runtimeType;
     public String joinSide;
+    
+    public AttributeInfo(){
+        // do nothing
+    }
+    
+    public AttributeInfo(AttributeInfo original){
+        this.forwardMap = original.forwardMap;
+        this.forwardMapTranslated = original.forwardMapTranslated;
+        this.runtimeType = original.runtimeType;
+        this.joinSide = original.joinSide;
+        this.name = original.name;
+        this.conceptualDataType = original.conceptualDataType;
+        this.internalDataType = original.internalDataType;
+        this.index = original.index;
+        this.reference = original.reference;
+        this.reference = original;
+        this.fields = new ArrayList<>(original.fields);
+    }    
 }
