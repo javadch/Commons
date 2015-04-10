@@ -302,7 +302,6 @@ public abstract class DataReaderBuilderBase {
         
     public LinkedHashMap<String, InMemorySourceFile> createSources() throws IOException{
         // check if the statement has no adapter, throw an exception
-        ClassGenerator generator = new ClassGenerator();
         String resultEntityString;
         String rowEntityString;
         String readerString;
@@ -328,6 +327,7 @@ public abstract class DataReaderBuilderBase {
         });
         
         LinkedHashMap<String, InMemorySourceFile> sources = new LinkedHashMap<>();
+        ClassGenerator generator = new ClassGenerator();
         if(entityResourceName!= null && !entityResourceName.isEmpty()){
             resultEntityString = generator.generate(this, entityResourceName, "Resource", resultEntityContext);
             if(resultEntityString!= null && !resultEntityString.isEmpty()){
