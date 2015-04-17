@@ -2,6 +2,10 @@ package com.vaiona.commons.compilation;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.text.MessageFormat;
 
 /**
  *
@@ -21,11 +25,36 @@ public class ObjectCreator {
 //       return instance;
 //    }
 
-    public static Object load(Class classObject) throws NoSuchMethodException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {        
+    public static ClassLoader getURLClassLoader(String urlString) throws Exception {
+        try{
+            ClassLoader classLoader = new URLClassLoader(new URL[]{new URL(urlString)});
+            return classLoader;
+        } catch (MalformedURLException ex){
+            throw new Exception(MessageFormat.format("Can not get the class {0} from the specified class loader {1}.", urlString));
+        }
+    }
+    
+    public static ClassLoader getURLClassLoader(URL url) {
+        ClassLoader classLoader = new URLClassLoader(new URL[]{url});
+        return classLoader;
+    }
 
-        Constructor<?> c = classObject.getConstructor(); // parameterless ctor
-        c.setAccessible(true);
-        Object instance = c.newInstance();
-       return instance;
+    public static Class getClass(String className, ClassLoader classLoader) throws Exception {
+        try{
+            Class claz = classLoader.loadClass(className);
+        return claz;
+        } catch(ClassNotFoundException ex){
+            throw new Exception(MessageFormat.format("Can not get the class {0} from the specified class loader {1}.", className));
+        }
+    }
+    public static Object createInstance(Class classObject) throws Exception {        
+        try{
+            Constructor<?> c = classObject.getConstructor(); // parameterless ctor
+            c.setAccessible(true);
+            Object instance = c.newInstance();
+            return instance;
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex){
+            throw new Exception(MessageFormat.format("Can not get an instance of the class {0}.", classObject.getName()));
+        }
     }
 }
