@@ -1,6 +1,8 @@
 package com.vaiona.commons.compilation;
 
+import com.vaiona.commons.logging.LoggerHelper;
 import java.net.URI;
+import java.text.MessageFormat;
 import javax.tools.SimpleJavaFileObject;
 
 public class InMemorySourceFile extends SimpleJavaFileObject {
@@ -33,6 +35,9 @@ public class InMemorySourceFile extends SimpleJavaFileObject {
 
     public void setCompiledClass(Class compiledClass) {
         this.compiledClass = compiledClass;
+        if(compiledClass == null){
+            LoggerHelper.logError(MessageFormat.format("The data accessor source {0} has no compiled counterpart.", this.getFullName()));        
+        }
     }
 
     public InMemorySourceFile(String className, CharSequence content) {
