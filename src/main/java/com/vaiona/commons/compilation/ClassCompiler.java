@@ -25,6 +25,10 @@ public class ClassCompiler {
     private JavaFileManager fileManager;// = new InMemoryFileManager(compiler.getStandardFileManager(null, null, null));
     
     public ClassCompiler(){
+        LoggerHelper.logDebug(MessageFormat.format("Java Home before change: {0}", System.getProperty("java.home")));
+        System.setProperty("java.home", "C:\\Program Files\\Java\\jdk1.8.0");
+        LoggerHelper.logDebug(MessageFormat.format("Javad home changed to the JDK to support runtime class compilation: {0}", System.getProperty("java.home")));
+
         LoggerHelper.logDebug(MessageFormat.format("Checkpoint {0}: ClassCompiler.ctor. The compiler is istantiating...", 1));
         try{
             compiler = ToolProvider.getSystemJavaCompiler();
@@ -53,14 +57,14 @@ public class ClassCompiler {
     public JavaFileManager compile(List<String> classes){
         //((InMemoryFileManager)fileManager).reset();
         // check whether it is Java 8, as some of its features are used in the sources
-        LoggerHelper.logDebug(MessageFormat.format("Compiling the {0} source(s) files is started.", sources.size()));
+        LoggerHelper.logDebug(MessageFormat.format("Compiling the {0} source files is started.", sources.size()));
         Boolean compiled = compiler
                 .getTask(null, fileManager, null, null, classes, sources)
                 .call();
         if(compiled){
-            LoggerHelper.logDebug(MessageFormat.format("Compiling the {0} source(s) files was successfully done.", sources.size()));           
+            LoggerHelper.logDebug(MessageFormat.format("Compiling the {0} source files was successfully done.", sources.size()));           
         }else{
-            LoggerHelper.logError(MessageFormat.format("Compiling the {0} source(s) files has failed.", sources.size()));
+            LoggerHelper.logError(MessageFormat.format("Compiling the {0} source files has failed.", sources.size()));
         }
         return fileManager;
     }
