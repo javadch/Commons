@@ -24,10 +24,16 @@ public class ClassCompiler {
     private JavaCompiler compiler;// = ToolProvider.getSystemJavaCompiler();
     private JavaFileManager fileManager;// = new InMemoryFileManager(compiler.getStandardFileManager(null, null, null));
     
-    public ClassCompiler(){
+    public ClassCompiler() throws Exception{
         LoggerHelper.logDebug(MessageFormat.format("Java Home before change: {0}", System.getProperty("java.home")));
-        System.setProperty("java.home", "C:\\Program Files\\Java\\jdk1.8.0");
-        LoggerHelper.logDebug(MessageFormat.format("Javad home changed to the JDK to support runtime class compilation: {0}", System.getProperty("java.home")));
+        String jdkHome = System.getenv("JAVA_HOME");
+        if(jdkHome == null || jdkHome.isEmpty()){
+            String message = MessageFormat.format("{0} environment variable not found. The system needs the {0} to point to a JDK version 8 or upper.", "JAVA_HOME");
+            LoggerHelper.logError(message);
+            throw new Exception(message);
+        }
+        System.setProperty("java.home", jdkHome);// "C:\\Program Files\\Java\\jdk1.8.0");
+        LoggerHelper.logDebug(MessageFormat.format("Java home changed to the JDK to support runtime class compilation: {0}", System.getProperty("java.home")));
 
         LoggerHelper.logDebug(MessageFormat.format("Checkpoint {0}: ClassCompiler.ctor. The compiler is istantiating...", 1));
         try{
@@ -36,10 +42,14 @@ public class ClassCompiler {
                 fileManager = new InMemoryFileManager(compiler.getStandardFileManager(null, null, null));
                 LoggerHelper.logDebug(MessageFormat.format("Checkpoint {0}: ClassCompiler.ctor. The compiler is istantiated", 2));
             }else{
-                LoggerHelper.logError(MessageFormat.format("Not able to get the Java Compiler (using: ToolProvider.getSystemJavaCompiler())!", 2));                
+                String message = MessageFormat.format("Not able to get the Java Compiler (using: ToolProvider.getSystemJavaCompiler())!", 2);
+                LoggerHelper.logError(message);                
+                throw new Exception(message);
             }            
         } catch (Exception ex){
-            LoggerHelper.logError(MessageFormat.format("Not able to get the Java Compiler. Cause: {0}", ex.getMessage()));            
+            String message = MessageFormat.format("Not able to get the Java Compiler. Cause: {0}", ex.getMessage());
+            LoggerHelper.logError(message);            
+            throw new Exception(message);
         }
     }
     
