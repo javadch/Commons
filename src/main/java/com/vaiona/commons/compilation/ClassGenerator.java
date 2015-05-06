@@ -26,6 +26,10 @@ public class ClassGenerator {
             Map<String, Object> conf = new HashMap<>();
             conf.put("engine.precompile_mode.enabled", true);
             conf.put("engine.load_precompiled.enabled", true);
+            //String tmpPath = Paths.get("./tmp").toAbsolutePath().normalize().toString();
+            //conf.put("rythm.engine.file_write.enabled", false); // do not write the cached files/ sources to a file
+            conf.put("rythm.home.tmp.dir", Paths.get("./temp").toAbsolutePath().normalize().toString());
+            //conf.put("rythm.home.precompiled.dir", Paths.get("./temp/compiled").toAbsolutePath().normalize().toString());
             engine = new RythmEngine(conf);
         }
     }
