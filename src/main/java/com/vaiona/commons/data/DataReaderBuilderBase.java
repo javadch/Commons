@@ -32,6 +32,8 @@ public abstract class DataReaderBuilderBase {
     protected String baseClassName = "";
     protected String leftClassName = "";
     protected String rightClassName = "";
+    protected String dialect = "default";
+    protected Boolean namesCaseSensitive = false;
     
     protected String joinType = ""; // must remain empty for non join statements
     protected String joinOperator;
@@ -63,11 +65,30 @@ public abstract class DataReaderBuilderBase {
         // in this case the resultEntityAttributes is populated for the result set schema and rowEntityAttributes is for the first phase data reading ...
         return rowEntityAttributes.size() > 0; 
     }
+
     public DataReaderBuilderBase where(String whereClause, boolean isJoinMode) throws Exception{ 
         this.whereClause = whereClause;
         // extract used attributes and put them in the pre population list
         extractUsedAttributes(whereClause, isJoinMode);
         return this;
+    }
+    
+    public DataReaderBuilderBase dialect(String value){ 
+        this.dialect = value;
+        return this;
+    }
+
+    public String getDialect(){
+        return dialect;
+    }
+    
+    public DataReaderBuilderBase namesCaseSensitive(Boolean value){ 
+        this.namesCaseSensitive = value;
+        return this;
+    }
+
+    public Boolean areNamesCaseSensitive(){
+        return namesCaseSensitive;
     }
     
     public DataReaderBuilderBase baseClassName(String value){
@@ -161,6 +182,7 @@ public abstract class DataReaderBuilderBase {
 
     // it would be good to have an overload that takes the index also. it removes the need to register unused fields
     public DataReaderBuilderBase addField(String fieldName, String dataTypeRef){
+        fieldName = namesCaseSensitive == true? fieldName: fieldName.toLowerCase();
         if(!fields.containsKey(fieldName)){
             FieldInfo fd = new FieldInfo();
             fd.name = fieldName;
@@ -173,7 +195,14 @@ public abstract class DataReaderBuilderBase {
     
     public DataReaderBuilderBase addFields(Map<String, FieldInfo> fields){
         this.fields.clear();
-        this.fields.putAll(fields);
+        //fieldName = namesCaseSensitive == true? fieldName: fieldName.toLowerCase();
+        fields.values().stream().forEach(f -> 
+            { 
+                f.name = namesCaseSensitive == true? f.name: f.name.toLowerCase();
+                this.fields.put(f.name, f);
+            }
+        );
+        //this.fields.putAll(fields);
         return this;
     }
 
@@ -355,11 +384,11 @@ public abstract class DataReaderBuilderBase {
     protected void buildSharedSegments() {
         if(baseClassName == null || baseClassName.isEmpty()){
             baseClassName = "C" + (new Date()).getTime();
-        }
-                
+        }                
         resultEntityContext.put("namespace", namespace);
         resultEntityContext.put("BaseClassName", baseClassName);
         resultEntityContext.put("Attributes", resultEntityAttributes.values().stream().collect(Collectors.toList()));        
+        resultEntityContext.put("dialect", dialect);
         
         readerContext.put("Attributes", resultEntityAttributes.values().stream().collect(Collectors.toList()));
         // the output row header, when the reader, pushes the resultset to another file
@@ -377,6 +406,7 @@ public abstract class DataReaderBuilderBase {
         readerContext.put("joinOperator", "");            
         readerContext.put("leftJoinKey", "");
         readerContext.put("rightJoinKey", ""); 
+        readerContext.put("dialect", dialect);
     }
 
     protected void buildSingleSourceSegments() {
