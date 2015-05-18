@@ -212,7 +212,13 @@ public abstract class DataReaderBuilderBase {
     
     public DataReaderBuilderBase addRightFields(Map<String, FieldInfo> fields){
         this.rightFields.clear();
-        this.rightFields.putAll(fields);
+        //fieldName = namesCaseSensitive == true? fieldName: fieldName.toLowerCase();
+        fields.values().stream().forEach(f -> 
+            { 
+                f.name = namesCaseSensitive == true? f.name: f.name.toLowerCase();
+                this.rightFields.put(f.name, f);
+            }
+        );
         return this;
     }
    

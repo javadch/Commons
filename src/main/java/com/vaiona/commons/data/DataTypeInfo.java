@@ -56,6 +56,11 @@ public class DataTypeInfo {
     public void setRuntimeType(String runtimeType) {
         this.runtimeType = runtimeType;
     }
+
+    public String makeDateCastPattern(String format) {
+        String pattern = "(new SimpleDateFormat(\"" + format + "\")).parse($data$)";
+        return pattern;
+    }
     
     
 }
