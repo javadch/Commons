@@ -1,7 +1,9 @@
 package com.vaiona.commons.compilation;
 
+import com.vaiona.commons.logging.LoggerHelper;
 import java.io.IOException;
 import java.security.SecureClassLoader;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import javax.tools.FileObject;
@@ -12,7 +14,7 @@ import javax.tools.StandardJavaFileManager;
 import javax.xml.crypto.dsig.keyinfo.RetrievalMethod;
 
 public class InMemoryFileManager extends ForwardingJavaFileManager {
-    
+    private ClassLoader parent;
     /**
     * Instance of JavaClassObject that will store the
     * compiled bytecode of our class
@@ -20,7 +22,7 @@ public class InMemoryFileManager extends ForwardingJavaFileManager {
     */
     private Map<String, InMemoryCompiledObject> classObjects = null;
 
-    private final ClassLoader loader = new InMemoryClassLoader();
+    private final ClassLoader loader;
 
     /**
     * Will initialize the manager with the specified
@@ -28,9 +30,10 @@ public class InMemoryFileManager extends ForwardingJavaFileManager {
     *
     * @param standardManger
     */
-    public InMemoryFileManager(StandardJavaFileManager standardManager) {
+    public InMemoryFileManager(StandardJavaFileManager standardManager, ClassLoader parent) {
         super(standardManager);
         classObjects = new HashMap<>();
+        loader = new InMemoryClassLoader(parent);
     }
 
     /**
@@ -68,12 +71,20 @@ public class InMemoryFileManager extends ForwardingJavaFileManager {
     }
 
     public class InMemoryClassLoader extends SecureClassLoader{
+        public InMemoryClassLoader(){
+            super();
+        }
+        public InMemoryClassLoader(ClassLoader parent){
+            super(parent);
+        }
         @Override
         protected Class<?> findClass(String name) throws ClassNotFoundException {
 
             if(!classObjects.containsKey(name)){
+                LoggerHelper.logError(MessageFormat.format("InMemory class loader faild to fine an entry for {0}!", name));                
                 throw new ClassNotFoundException("Class " + name + " not found");
             }
+            LoggerHelper.logDebug(MessageFormat.format("InMemory class loader has an entry for {0}.", name));                
             byte[] b = classObjects.get(name).getBytes();
             return super.defineClass(name, b, 0, b.length);
         }

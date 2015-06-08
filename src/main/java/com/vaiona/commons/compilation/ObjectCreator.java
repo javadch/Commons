@@ -21,6 +21,7 @@ public class ObjectCreator {
         ));
         return null;
     }
+    
     public static Object load(String fullClassName, Object[] ctorArgs) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, NoSuchMethodException, InvocationTargetException{        
         // ClassLoader cl2 = ClassLoader.getSystemClassLoader();
         // also using the fileManager.getClassLoader(null).loadClass(name) should return the class!
@@ -35,9 +36,9 @@ public class ObjectCreator {
        return instance;
     }
 
-    public static ClassLoader getURLClassLoader(String urlString) throws Exception {
+    public static ClassLoader getURLClassLoader(String urlString, ClassLoader parent) throws Exception {
         try{
-            ClassLoader classLoader = new URLClassLoader(new URL[]{new URL(urlString)});
+            ClassLoader classLoader = new URLClassLoader(new URL[]{new URL(urlString)}, parent);
             return classLoader;
         } catch (MalformedURLException ex){
             throw new Exception(MessageFormat.format("Can not get the class {0} from the specified class loader {1}.", urlString));

@@ -16,13 +16,15 @@ public class DataTypeInfo {
     String castPattern;
     String comparePattern;
     String runtimeType;
-    
-    public DataTypeInfo(String name, String castPattern, String comparePattern, String runtimeType){
+    Class primitiveType;
+
+    public DataTypeInfo(String name, String castPattern, String comparePattern, String runtimeType, Class primitiveType){
         this.name = name;
         this.lowerCaseName = name.toLowerCase();
         this.castPattern = castPattern;
         this.comparePattern = comparePattern;
         this.runtimeType = runtimeType;
+        this.primitiveType = primitiveType;
     }
 
     public String getName() {
@@ -62,5 +64,12 @@ public class DataTypeInfo {
         return pattern;
     }
     
-    
+    public Class getPrimitiveType() {
+        return primitiveType;
+    }
+
+    public void setPrimitiveType(Class primitiveType) {
+        this.primitiveType = primitiveType;
+    }
+        
 }

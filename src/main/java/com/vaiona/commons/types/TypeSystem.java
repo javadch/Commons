@@ -2,6 +2,7 @@
 package com.vaiona.commons.types;
 
 import com.vaiona.commons.data.DataTypeInfo;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +25,29 @@ public class TypeSystem {
         public static final String Unknown = "Unknown";
         public static final String Invalid = "Invalid";    
         public static final String DontCare = "*";
+    }
+    
+    public static class Convert{
+        public static double toPrimitive(Double value){
+            return (double)value;
+        }
+
+        public static int toPrimitive(Integer value){
+            return (int)value;
+        }
+
+        public static String toPrimitive(String value){
+            return value;
+        }
+
+        public static long toPrimitive(Long value){
+            return (long)value;
+        }
+
+        public static boolean toPrimitive(Boolean value){
+            return (boolean)value;
+        }
+        
     }
     private static final Map<String, DataTypeInfo> types = new HashMap<>();
     private static final List<ResultTypeInfo> resultTypeTable = new ArrayList<>();
@@ -87,13 +111,13 @@ public class TypeSystem {
     
     static { // configure conceptual types and thier parsing, evaluation counterparts for Java 
         
-        types.put(TypeSystem.TypeName.Boolean,    new DataTypeInfo(TypeSystem.TypeName.Boolean, "Boolean.parseBoolean($data$)", "Boolean.compare($first$, $second$)", "boolean"));
-        types.put(TypeSystem.TypeName.Byte,       new DataTypeInfo(TypeSystem.TypeName.Byte, "Byte.parseByte($data$)", "Boolean.compare($first$, $second$)", "Byte"));
-        types.put(TypeSystem.TypeName.String,     new DataTypeInfo(TypeSystem.TypeName.String, "String.valueOf($data$)", "$first$.compareTo($second$)", "String"));
-        types.put(TypeSystem.TypeName.Integer,    new DataTypeInfo(TypeSystem.TypeName.Integer, "Integer.parseInt($data$)", "Integer.compare($first$, $second$)", "int"));
-        types.put(TypeSystem.TypeName.Long,       new DataTypeInfo(TypeSystem.TypeName.Long, "Long.parseLong($data$)", "Long.compare($first$, $second$)", "long"));
-        types.put(TypeSystem.TypeName.Real,       new DataTypeInfo(TypeSystem.TypeName.Real, "Double.parseDouble($data$)", "Double.compare($first$, $second$)", "Double"));
-        types.put(TypeSystem.TypeName.Date,       new DataTypeInfo(TypeSystem.TypeName.Date, "(new SimpleDateFormat(\"yyyy-MM-dd'T'HH:mm:ssX\")).parse($data$)", "$first$.compareTo($second$)", "Date"));             
+        types.put(TypeSystem.TypeName.Boolean,    new DataTypeInfo(TypeSystem.TypeName.Boolean, "Boolean.parseBoolean($data$)", "Boolean.compare($first$, $second$)", "boolean", boolean.class));
+        types.put(TypeSystem.TypeName.Byte,       new DataTypeInfo(TypeSystem.TypeName.Byte, "Byte.parseByte($data$)", "Boolean.compare($first$, $second$)", "Byte", byte.class));
+        types.put(TypeSystem.TypeName.String,     new DataTypeInfo(TypeSystem.TypeName.String, "String.valueOf($data$)", "$first$.compareTo($second$)", "String", String.class));
+        types.put(TypeSystem.TypeName.Integer,    new DataTypeInfo(TypeSystem.TypeName.Integer, "Integer.parseInt($data$)", "Integer.compare($first$, $second$)", "int", int.class));
+        types.put(TypeSystem.TypeName.Long,       new DataTypeInfo(TypeSystem.TypeName.Long, "Long.parseLong($data$)", "Long.compare($first$, $second$)", "long", long.class));
+        types.put(TypeSystem.TypeName.Real,       new DataTypeInfo(TypeSystem.TypeName.Real, "Double.parseDouble($data$)", "Double.compare($first$, $second$)", "Double", double.class));
+        types.put(TypeSystem.TypeName.Date,       new DataTypeInfo(TypeSystem.TypeName.Date, "(new SimpleDateFormat(\"yyyy-MM-dd'T'HH:mm:ssX\")).parse($data$)", "$first$.compareTo($second$)", "LocalDateTime", LocalDateTime.class));             
         // candidates: Decimal, Geometry
     }
     

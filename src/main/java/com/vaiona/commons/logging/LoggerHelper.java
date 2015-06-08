@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  * @author jfd
  */
 public class LoggerHelper {
-    private static final Logger logger = LoggerFactory.getLogger("SciQuest");
+    private static final Logger logger = LoggerFactory.getLogger("XQtWorkbench");
     public static void logDebug(String name, String message){
         //Logger logger = LoggerFactory.getLogger(name);
         logger.debug(message);

@@ -24,7 +24,7 @@ public class ClassCompiler {
     private JavaCompiler compiler;// = ToolProvider.getSystemJavaCompiler();
     private JavaFileManager fileManager;// = new InMemoryFileManager(compiler.getStandardFileManager(null, null, null));
     
-    public ClassCompiler() throws Exception{
+    public ClassCompiler(ClassLoader parent) throws Exception{
         LoggerHelper.logDebug(MessageFormat.format("Java Home before change: {0}", System.getProperty("java.home")));
         String jdkHome = System.getenv("JAVA_HOME");
         if(jdkHome == null || jdkHome.isEmpty()){
@@ -39,7 +39,7 @@ public class ClassCompiler {
         try{
             compiler = ToolProvider.getSystemJavaCompiler();
             if(compiler != null){
-                fileManager = new InMemoryFileManager(compiler.getStandardFileManager(null, null, null));
+                fileManager = new InMemoryFileManager(compiler.getStandardFileManager(null, null, null), parent);
                 LoggerHelper.logDebug(MessageFormat.format("Checkpoint {0}: ClassCompiler.ctor. The compiler is istantiated", 2));
             }else{
                 String message = MessageFormat.format("Not able to get the Java Compiler (using: ToolProvider.getSystemJavaCompiler())!", 2);
