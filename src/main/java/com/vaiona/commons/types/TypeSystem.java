@@ -2,7 +2,9 @@
 package com.vaiona.commons.types;
 
 import com.vaiona.commons.data.DataTypeInfo;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +24,8 @@ public class TypeSystem {
         public static final String Long = "Long";
         public static final String Real = "Real";
         public static final String Date = "Date";
+        public static final String Time = "Time";
+        public static final String DateTime = "DateTime";
         public static final String Unknown = "Unknown";
         public static final String Invalid = "Invalid";    
         public static final String DontCare = "*";
@@ -117,7 +121,11 @@ public class TypeSystem {
         types.put(TypeSystem.TypeName.Integer,    new DataTypeInfo(TypeSystem.TypeName.Integer, "Integer.parseInt($data$)", "Integer.compare($first$, $second$)", "int", int.class));
         types.put(TypeSystem.TypeName.Long,       new DataTypeInfo(TypeSystem.TypeName.Long, "Long.parseLong($data$)", "Long.compare($first$, $second$)", "long", long.class));
         types.put(TypeSystem.TypeName.Real,       new DataTypeInfo(TypeSystem.TypeName.Real, "Double.parseDouble($data$)", "Double.compare($first$, $second$)", "Double", double.class));
-        types.put(TypeSystem.TypeName.Date,       new DataTypeInfo(TypeSystem.TypeName.Date, "(new SimpleDateFormat(\"yyyy-MM-dd'T'HH:mm:ssX\")).parse($data$)", "$first$.compareTo($second$)", "LocalDateTime", LocalDateTime.class));             
+        types.put(TypeSystem.TypeName.Date,       new DataTypeInfo(TypeSystem.TypeName.Date, "(new SimpleDateFormat(\"yyyy-MM-dd\")).parse($data$)", "$first$.compareTo($second$)", "java.util.Date", java.util.Date.class));             
+        // add all conversions to the table, and the DateTime and Time to the grammar
+//        types.put(TypeSystem.TypeName.Date,       new DataTypeInfo(TypeSystem.TypeName.Date, "(new SimpleDateFormat(\"yyyy-MM-dd\")).parse($data$)", "$first$.compareTo($second$)", "java.time.LocalDate", LocalDate.class));             
+//        types.put(TypeSystem.TypeName.Time,       new DataTypeInfo(TypeSystem.TypeName.Date, "(new SimpleDateFormat(\"HH:mm:ss\")).parse($data$)", "$first$.compareTo($second$)", "java.time.LocalTime", LocalTime.class));             
+//        types.put(TypeSystem.TypeName.DateTime,   new DataTypeInfo(TypeSystem.TypeName.Date, "(new SimpleDateFormat(\"yyyy-MM-dd'T'HH:mm:ssX\")).parse($data$)", "$first$.compareTo($second$)", "java.time.LocalDateTime", LocalDateTime.class));             
         // candidates: Decimal, Geometry
     }
     
