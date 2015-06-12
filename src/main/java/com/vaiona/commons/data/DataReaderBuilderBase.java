@@ -60,6 +60,13 @@ public abstract class DataReaderBuilderBase {
     protected String entityResourceName = "Entity";
     protected String readerResourceName = "Reader";
     
+    protected String sourceOfData = "container";
+
+    public String getSourceOfData(){ return sourceOfData;}
+    public DataReaderBuilderBase sourceOfData(String value){
+        this.sourceOfData = value;
+        return this;
+    }
 
     public Boolean hasAggregate(){
         // in this case the resultEntityAttributes is populated for the result set schema and rowEntityAttributes is for the first phase data reading ...
