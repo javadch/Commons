@@ -76,7 +76,7 @@ public abstract class DataReaderBuilderBase {
     public DataReaderBuilderBase where(String whereClause, boolean isJoinMode) throws Exception{ 
         this.whereClause = whereClause;
         // extract used attributes and put them in the pre population list
-        extractUsedAttributes(whereClause, isJoinMode);
+        whereClauseTranslated = extractUsedAttributes(whereClause, isJoinMode);
         return this;
     }
     
@@ -296,7 +296,8 @@ public abstract class DataReaderBuilderBase {
         
     protected abstract String translate(AttributeInfo attribute, boolean rightSide);
     
-    private void extractUsedAttributes(String expression, boolean isJoinMode) throws Exception {
+    private String extractUsedAttributes(String expression, boolean isJoinMode) throws Exception {
+        String translated = "";
         referencedAttributes.clear();
         for (StringTokenizer stringTokenizer = new StringTokenizer(expression, " ");
                 stringTokenizer.hasMoreTokens();) {
@@ -316,12 +317,12 @@ public abstract class DataReaderBuilderBase {
                 // translate the wehre clause
                 if(rowEntityAttributes.containsKey(token)){
                     if(!isJoinMode)
-                        whereClauseTranslated = whereClauseTranslated + " " + "p." + token;
+                        translated = translated + " " + "p." + token;
                     else
-                        whereClauseTranslated = whereClauseTranslated + " " + "rowEntity." + token;
+                        translated = translated + " " + "rowEntity." + token;
                 }
                 else {
-                    whereClauseTranslated = whereClauseTranslated + " " + token;
+                    translated = translated + " " + token;
                 }                                      
             } else {
                 if (resultEntityAttributes.containsKey(token) && !referencedAttributes.containsKey(token)) {
@@ -332,17 +333,52 @@ public abstract class DataReaderBuilderBase {
                 // translate the wehre clause
                 if(resultEntityAttributes.containsKey(token)){
                     if(!isJoinMode)
-                        whereClauseTranslated = whereClauseTranslated + " " + "p." + token;
+                        translated = translated + " " + "p." + token;
                     else
-                        whereClauseTranslated = whereClauseTranslated + " " + "rowEntity." + token;
+                        translated = translated + " " + "rowEntity." + token;
                 }
                 else {
-                    whereClauseTranslated = whereClauseTranslated + " " + token;
+                    translated = translated + " " + token;
                 }                      
             }
         }
+        return translated;
     }
         
+    public String enhanceExpression(String expression, boolean isJoinMode, String nonJoinPrefix, String joinPrefix) throws Exception {
+        String translated = "";
+        for (StringTokenizer stringTokenizer = new StringTokenizer(expression, " ");
+                stringTokenizer.hasMoreTokens();) {
+            String token = stringTokenizer.nextToken();
+            if(hasAggregate()){
+                // non aggregate attributes apear in both row and result entities, so if an attribute apears in the result but not in the row 
+                // entity, it is an aggregate attribute.
+                // translate the expression
+                if(rowEntityAttributes.containsKey(token)){
+                    if(!isJoinMode)
+                        translated = translated + " " + nonJoinPrefix + "." + token;
+                    else
+                        translated = translated + " " + joinPrefix + "." + token;
+                }
+                else {
+                    translated = translated + " " + token;
+                }                                      
+            } else {
+                // translate the wehre clause
+                if(resultEntityAttributes.containsKey(token)){
+                    if(!isJoinMode)
+                        translated = translated + " " + nonJoinPrefix + "." + token;
+                    else
+                        translated = translated + " " + joinPrefix + "." + token;
+                }
+                else {
+                    translated = translated + " " + token;
+                }                      
+            }
+        }
+        return translated;
+    }
+    
     public LinkedHashMap<String, InMemorySourceFile> createSources() throws IOException{
         // check if the statement has no adapter, throw an exception
         String resultEntityString;
