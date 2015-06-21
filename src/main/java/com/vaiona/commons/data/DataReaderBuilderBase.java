@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
  */
 public abstract class DataReaderBuilderBase {
     
+    protected String statementId = "";
     protected String namespace = "";
     protected String baseClassName = "";
     protected String leftClassName = "";
@@ -62,7 +63,19 @@ public abstract class DataReaderBuilderBase {
     
     protected String sourceOfData = "container";
 
-    public String getSourceOfData(){ return sourceOfData;}
+    public DataReaderBuilderBase statementId(String value){ 
+        this.statementId = value;
+        return this;
+    }
+
+    public String getStatementId(){
+        return statementId;
+    }
+
+    public String getSourceOfData(){ 
+        return sourceOfData;
+    }
+    
     public DataReaderBuilderBase sourceOfData(String value){
         this.sourceOfData = value;
         return this;
@@ -433,7 +446,8 @@ public abstract class DataReaderBuilderBase {
 
     protected void buildSharedSegments() {
         if(baseClassName == null || baseClassName.isEmpty()){
-            baseClassName = "C" + (new Date()).getTime();
+            //baseClassName = "C" + (new Date()).getTime(); // sometimes causes duplicate names
+            baseClassName = "Stmt_" +  statementId + "_"; //(new Date()).getTime();
         }             
         
         String recordClassName = baseClassName + "Record";
