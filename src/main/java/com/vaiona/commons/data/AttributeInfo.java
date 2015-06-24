@@ -39,5 +39,5 @@ public class AttributeInfo extends FieldInfo {
         this.reference = original.reference;
         this.reference = original;
         this.fields = new ArrayList<>(original.fields);
-    }    
+    }        
 }

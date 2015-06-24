@@ -116,11 +116,11 @@ public class TypeSystem {
     static { // configure conceptual types and thier parsing, evaluation counterparts for Java 
         
         types.put(TypeSystem.TypeName.Boolean,    new DataTypeInfo(TypeSystem.TypeName.Boolean, "Boolean.parseBoolean($data$)", "Boolean.compare($first$, $second$)", "boolean", boolean.class));
-        types.put(TypeSystem.TypeName.Byte,       new DataTypeInfo(TypeSystem.TypeName.Byte, "Byte.parseByte($data$)", "Boolean.compare($first$, $second$)", "Byte", byte.class));
+        types.put(TypeSystem.TypeName.Byte,       new DataTypeInfo(TypeSystem.TypeName.Byte, "Byte.parseByte($data$)", "Boolean.compare($first$, $second$)", "byte", byte.class));
         types.put(TypeSystem.TypeName.String,     new DataTypeInfo(TypeSystem.TypeName.String, "String.valueOf($data$)", "$first$.compareTo($second$)", "String", String.class));
         types.put(TypeSystem.TypeName.Integer,    new DataTypeInfo(TypeSystem.TypeName.Integer, "Integer.parseInt($data$)", "Integer.compare($first$, $second$)", "int", int.class));
         types.put(TypeSystem.TypeName.Long,       new DataTypeInfo(TypeSystem.TypeName.Long, "Long.parseLong($data$)", "Long.compare($first$, $second$)", "long", long.class));
-        types.put(TypeSystem.TypeName.Real,       new DataTypeInfo(TypeSystem.TypeName.Real, "Double.parseDouble($data$)", "Double.compare($first$, $second$)", "Double", double.class));
+        types.put(TypeSystem.TypeName.Real,       new DataTypeInfo(TypeSystem.TypeName.Real, "Double.parseDouble($data$)", "Double.compare($first$, $second$)", "double", double.class));
         types.put(TypeSystem.TypeName.Date,       new DataTypeInfo(TypeSystem.TypeName.Date, "(new SimpleDateFormat(\"yyyy-MM-dd\")).parse($data$)", "$first$.compareTo($second$)", "java.util.Date", java.util.Date.class));             
         // add all conversions to the table, and the DateTime and Time to the grammar
 //        types.put(TypeSystem.TypeName.Date,       new DataTypeInfo(TypeSystem.TypeName.Date, "(new SimpleDateFormat(\"yyyy-MM-dd\")).parse($data$)", "$first$.compareTo($second$)", "java.time.LocalDate", LocalDate.class));             
