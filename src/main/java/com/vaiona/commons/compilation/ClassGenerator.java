@@ -6,13 +6,18 @@
 
 package com.vaiona.commons.compilation;
 
+import com.vaiona.commons.logging.LoggerHelper;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.rythmengine.RythmEngine;
 
 /**
@@ -24,11 +29,17 @@ public class ClassGenerator {
     public ClassGenerator(){
         if(engine == null){
             Map<String, Object> conf = new HashMap<>();
-            conf.put("engine.precompile_mode.enabled", true);
-            conf.put("engine.load_precompiled.enabled", true);
-            //String tmpPath = Paths.get("./tmp").toAbsolutePath().normalize().toString();
-            //conf.put("rythm.engine.file_write.enabled", false); // do not write the cached files/ sources to a file
-            conf.put("rythm.home.tmp.dir", Paths.get("./temp").toAbsolutePath().normalize().toString());
+            try {
+                //conf.put("engine.load_precompiled.enabled", true);
+                //conf.put("rythm.engine.mode", "dev");
+                //String tmpPath = Paths.get("./tmp").toAbsolutePath().normalize().toString();
+                //conf.put("rythm.engine.file_write.enabled", false); // do not write the cached files/ sources to a file
+                //conf.put("rythm.home.tmp.dir", Paths.get("./temp").toAbsolutePath().normalize().toString());
+                Files.createDirectories(Paths.get("./temp"));
+                conf.put("rythm.home.tmp.dir", new File("./temp"));
+            } catch (IOException ex) {
+                LoggerHelper.logError(MessageFormat.format("Can not create the temp folder!", 1));
+            }
             //conf.put("rythm.home.precompiled.dir", Paths.get("./temp/compiled").toAbsolutePath().normalize().toString());
             engine = new RythmEngine(conf);
         }

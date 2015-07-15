@@ -81,7 +81,7 @@ public class InMemoryFileManager extends ForwardingJavaFileManager {
         protected Class<?> findClass(String name) throws ClassNotFoundException {
 
             if(!classObjects.containsKey(name)){
-                LoggerHelper.logError(MessageFormat.format("InMemory class loader faild to fine an entry for {0}!", name));                
+                LoggerHelper.logError(MessageFormat.format("InMemory class loader faild to find an entry for {0}!", name));                
                 throw new ClassNotFoundException("Class " + name + " not found");
             }
             LoggerHelper.logDebug(MessageFormat.format("InMemory class loader has an entry for {0}.", name));                
