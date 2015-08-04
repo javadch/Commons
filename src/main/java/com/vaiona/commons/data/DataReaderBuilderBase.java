@@ -554,13 +554,15 @@ public abstract class DataReaderBuilderBase {
             List<AttributeInfo> leftOuterItems = postAttributes.values().stream()
                     .filter(p-> p.joinSide.equalsIgnoreCase("L"))
                     .collect(Collectors.toList());
-            leftOuterItems.addAll(orderItems.keySet().stream().filter(p-> !leftOuterItems.contains(p)).collect(Collectors.toList()));
+            if(orderItems != null)
+                leftOuterItems.addAll(orderItems.keySet().stream().filter(p-> !leftOuterItems.contains(p)).collect(Collectors.toList()));
             entityContext.put("Post_Left", leftOuterItems);
 
             List<AttributeInfo> rightOuterItems = postAttributes.values().stream()
                     .filter(p-> p.joinSide.equalsIgnoreCase("R"))
                     .collect(Collectors.toList());
-            rightOuterItems.addAll(orderItems.keySet().stream().filter(p-> !rightOuterItems.contains(p)).collect(Collectors.toList()));
+            if(orderItems != null)
+                rightOuterItems.addAll(orderItems.keySet().stream().filter(p-> !rightOuterItems.contains(p)).collect(Collectors.toList()));
             entityContext.put("Post_Right", rightOuterItems);
         }
     }
