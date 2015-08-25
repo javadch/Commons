@@ -80,13 +80,26 @@ public class ClassCompiler {
             return null;
         try{
             File home = Paths.get(start).toFile(); // maybe it directly point to the JDK, or it hab been set in prvious runs.
-
             boolean found = false;
-            while(!found){ // braaks when a jdk folder is found or there is no more parent
-                home = home.getParentFile(); // check sibelings
+            while(!found){ // breaks when a jdk folder is found or there is no JDK in the path and its parents
+                // check the path itself
+                if(isJDK8(home.getName())){
+                    if(Paths.get(home.getPath(), "lib", "tools.jar").toFile().exists()){                
+                        return home.getPath();
+                    }                                    
+                }
+                
+                home = home.getParentFile(); // check sibelings. the home that was checked before, gets checked again when the home is set to parent.
                 if(home == null)
                     return null;
-                File[] sibelings = home.listFiles((File dir, String name) -> name.toLowerCase().contains( "jdk" ));
+                File[] sibelings = home.listFiles((File dir, String name) -> isJDK8(name)); // search for JDK 8 and upper
+
+//                String osName = System.getProperty("os.name").toLowerCase();
+//                if (osName.contains("win")) {                    
+//                } else if(osName.contains("nix") || osName.contains("nux") || osName.contains("aix")){
+//                } else if(osName.contains("mac")){
+//                }
+
                 for(File sibeling: sibelings){
                     if(Paths.get(sibeling.getPath(), "lib", "tools.jar").toFile().exists()){                
                         return sibeling.getPath();
@@ -94,33 +107,59 @@ public class ClassCompiler {
                 }            
             }
         } catch (Exception ex){
-            return null;
+            return searchForJDK(Paths.get(start).getParent().toString());
         }
         return null;
     }
+    
+    private boolean isJDK8(String path){
+        String lower = path.toLowerCase();
+        if(lower.contains("1.8") && lower.contains("jdk"))
+            return true;
+        return false;
+    }
+    
+    private static String cachedJDKPath = null;
     public void setJDK(String base) throws Exception {
+        if(cachedJDKPath != null){
+            System.setProperty("java.home", cachedJDKPath);
+            return;
+        }
+        
         String jdkRoot = null;
         
         LoggerHelper.logDebug(MessageFormat.format("Searching JDK_HOME at: {0}", System.getenv("JDK_HOME")));        
-        //jdkRoot = searchForJDK(System.getenv("JDK_HOME"));
+        jdkRoot = System.getenv("JDK_HOME"); // no need to search when JDK_HOME is set.
         if(jdkRoot != null){
             System.setProperty("java.home", jdkRoot);
+            cachedJDKPath = jdkRoot;
             LoggerHelper.logDebug(MessageFormat.format("JDK was found at: {0}", jdkRoot));            
             return;
         }
         
         LoggerHelper.logDebug(MessageFormat.format("Searching JAVA_HOME at: {0}", System.getenv("JAVA_HOME")));
-        //jdkRoot = searchForJDK(System.getenv("JAVA_HOME"));
+        jdkRoot = searchForJDK(System.getenv("JAVA_HOME"));
         if(jdkRoot != null){
             System.setProperty("java.home", jdkRoot);
+            cachedJDKPath = jdkRoot;
             LoggerHelper.logDebug(MessageFormat.format("JDK was found at: {0}", jdkRoot));            
             return;
         }
         
+        LoggerHelper.logDebug(MessageFormat.format("Searching application's java.home at: {0}", System.getProperty("java.home")));
+        jdkRoot = searchForJDK(System.getProperty("java.home"));
+        if(jdkRoot != null){
+            System.setProperty("java.home", jdkRoot);
+            cachedJDKPath = jdkRoot;
+            LoggerHelper.logDebug(MessageFormat.format("JDK was found at: {0}", jdkRoot));            
+            return;
+        }
+
         CommandExecutor cmd = new CommandExecutor();
         for(String path : cmd.locateJDK()){
             LoggerHelper.logDebug(MessageFormat.format("Searching via command line: {0}", path));
             jdkRoot = searchForJDK(path);
+            cachedJDKPath = jdkRoot;
             if(jdkRoot != null){
                 System.setProperty("java.home", jdkRoot);
                 LoggerHelper.logDebug(MessageFormat.format("JDK was found at: {0}", jdkRoot));            
@@ -128,15 +167,7 @@ public class ClassCompiler {
             }
         }
         
-        LoggerHelper.logDebug(MessageFormat.format("Searching application's java.home at: {0}", System.getProperty("java.home")));
-        jdkRoot = searchForJDK(System.getProperty("java.home"));
-        if(jdkRoot != null){
-            System.setProperty("java.home", jdkRoot);
-            LoggerHelper.logDebug(MessageFormat.format("JDK was found at: {0}", jdkRoot));            
-            return;
-        }
-        
-        String message = MessageFormat.format("No JDK was not found, or the jdk\\lib\\tools.jar is not available. The XQt engine needs the {0} environement variable to point to a JDK version 8 or upper.", "JDK_HOME");
+        String message = MessageFormat.format("No JDK was not found, or the jdk/lib/tools.jar is not available. The XQt engine needs the {0} environement variable to point to a JDK version 8 or upper.", "JDK_HOME");
         LoggerHelper.logError(message);
         throw new Exception(message);            
         
