@@ -116,6 +116,8 @@ public class ClassCompiler {
         String lower = path.toLowerCase();
         if(lower.contains("1.8") && lower.contains("jdk"))
             return true;
+        if(lower.contains("-8") && lower.contains("jdk")) // orcale jdk on linux
+            return true;
         return false;
     }
     
