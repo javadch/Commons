@@ -49,7 +49,7 @@ public class FileHelper {
                 if(Paths.get(makeAbsolute(Paths.get(pathItem.trim(), "config", "adapters.xml").toString())).toFile().exists())
                     return Paths.get(pathItem.trim(), "config").toString();
             }
-            return ("config");
+            return ("");
         } catch (Exception ex){
             return "";
         }
