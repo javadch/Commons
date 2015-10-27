@@ -6,14 +6,11 @@
 
 package com.vaiona.commons.compilation;
 
-import com.vaiona.commons.io.CommandExecutor;
 import com.vaiona.commons.lang.Environment;
 import com.vaiona.commons.logging.LoggerHelper;
-import java.io.File;
-import java.io.FilenameFilter;
-import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileManager;
@@ -65,9 +62,12 @@ public class ClassCompiler {
         //((InMemoryFileManager)fileManager).reset();
         // check whether it is Java 8, as some of its features are used in the sources
         LoggerHelper.logDebug(MessageFormat.format("Compiling the {0} source files is started.", sources.size()));
+        final Collection<String> compilerOptions=new ArrayList<>();
+        compilerOptions.add("-Xlint:unchecked");
         Boolean compiled = compiler
-                .getTask(null, fileManager, null, null, classes, sources)
-                .call();
+                //.getTask(null, fileManager, null, compilerOptions, classes, sources)
+        		.getTask(null, fileManager, null, null, classes, sources)
+        		.call();
         if(compiled){
             LoggerHelper.logDebug(MessageFormat.format("Compiling the {0} source files was successfully done.", sources.size()));           
         }else{
