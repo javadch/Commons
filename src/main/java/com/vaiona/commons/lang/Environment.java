@@ -123,7 +123,11 @@ public class Environment {
         if(name.contains("-8") && name.contains("jdk")) // Oracle JDK on Linux
             return true;
         String osName = System.getProperty("os.name").toLowerCase();
-        if (osName.contains("mac")) {
+        
+        if (osName.contains("nix")) {
+            if(name.contains("java") && name.contains("-8-oracle")) // Oracle JDK on Linux
+                return true;        	
+        }else if (osName.contains("mac")) {
         	String path = file.getPath().toLowerCase();
             if(path.contains("1.8") && path.contains("jdk")){
             	LoggerHelper.logDebug(MessageFormat.format("Potential JDK locatoin found on Mac at: {0}", path));
