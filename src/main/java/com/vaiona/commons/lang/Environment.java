@@ -21,9 +21,10 @@ import java.util.List;
  */
 public class Environment {
     private static String cachedJDKPath = null;
+    
     public static void setJDK() throws Exception {
         System.setProperty("java.home", getJDK8Folder()); // throws an exception if the JDK was not found.
-        String message = MessageFormat.format("The JDK 8 was set to {0}.", System.getProperty("java.home"));
+        String message = MessageFormat.format("A JDK 8 was set to {0}.", System.getProperty("java.home"));
         LoggerHelper.logDebug(message);
     }
     
@@ -37,7 +38,7 @@ public class Environment {
         jdkRoot = searchForJDK(System.getenv("JDK_HOME")); // no need to search when JDK_HOME is set, but  it is done to be sure
         if(jdkRoot != null){
             cachedJDKPath = jdkRoot;
-            LoggerHelper.logDebug(MessageFormat.format("JDK was found at: {0}", jdkRoot));            
+            LoggerHelper.logDebug(MessageFormat.format("A JDK 8 was found at: {0}", jdkRoot));            
             return jdkRoot;
         }
         LoggerHelper.logDebug(MessageFormat.format("Searching JDK_HOME at '{0}' was NOT successful.", System.getenv("JDK_HOME")));        
@@ -45,7 +46,7 @@ public class Environment {
         jdkRoot = searchForJDK(System.getenv("JAVA_HOME"));
         if(jdkRoot != null){
             cachedJDKPath = jdkRoot;
-            LoggerHelper.logDebug(MessageFormat.format("JDK was found at: {0}", jdkRoot));            
+            LoggerHelper.logDebug(MessageFormat.format("A JDK 8 was found at: {0}", jdkRoot));            
             return jdkRoot;
         }
         LoggerHelper.logDebug(MessageFormat.format("Searching JAVA_HOME at '{0}' was NOT successful.", System.getenv("JAVA_HOME")));
@@ -53,7 +54,7 @@ public class Environment {
         jdkRoot = searchForJDK(System.getProperty("java.home"));
         if(jdkRoot != null){
             cachedJDKPath = jdkRoot;
-            LoggerHelper.logDebug(MessageFormat.format("JDK was found at: {0}", jdkRoot));            
+            LoggerHelper.logDebug(MessageFormat.format("A JDK 8 was found at: {0}", jdkRoot));            
             return jdkRoot;
         }
         LoggerHelper.logDebug(MessageFormat.format("Searching application's java.home at '{0}' was NOT successful.", System.getProperty("java.home")));
@@ -64,12 +65,12 @@ public class Environment {
             jdkRoot = searchForJDK(path);
             cachedJDKPath = jdkRoot;
             if(jdkRoot != null){
-                LoggerHelper.logDebug(MessageFormat.format("JDK was found at: {0}", jdkRoot));            
+                LoggerHelper.logDebug(MessageFormat.format("A JDK 8 was found at: {0}", jdkRoot));            
                 return jdkRoot;
             }
         }
         
-        String message = MessageFormat.format("JDK 8 was not found, or the jdk/lib/tools.jar is not available. The XQt query engine needs the {0} environement variable to point to a JDK version 8 or upper.", "JDK_HOME");
+        String message = MessageFormat.format("No JDK 8 was found, or the jdk/lib/tools.jar is not available. The XQt query engine needs the {0} environement variable to point to a JDK version 8 or upper.", "JDK_HOME");
         LoggerHelper.logError(message);
         throw new Exception(message);            
         
@@ -85,9 +86,9 @@ public class Environment {
                 // check the path itself
                 if(isJDK8(home)){
                 	Path jdkPath =Paths.get(home.getPath(), "lib", "tools.jar");
-            		LoggerHelper.logDebug(MessageFormat.format("Checking whether JDK compiler tools exists at:  {0}", jdkPath.toString()));
+            		LoggerHelper.logDebug(MessageFormat.format("Checking whether the JDK compiler tools exist in: {0}", jdkPath.toString()));
                     if(jdkPath.toFile().exists()){                
-                    	LoggerHelper.logDebug(MessageFormat.format("JDK compiler tool was found in: {0}", home.getPath().toString()));
+                    	LoggerHelper.logDebug(MessageFormat.format("The JDK 8 compiler tool was found in: {0}", home.getPath().toString()));
                         return home.getPath();
                     }                                    
                 }
@@ -99,9 +100,9 @@ public class Environment {
                 for(File sibling: sibelings){
                 	try{
                 		Path jdkPath = Paths.get(sibling.getPath(), "lib", "tools.jar");
-                		LoggerHelper.logDebug(MessageFormat.format("Checking whether JDK compiler tools exists at:  {0}", jdkPath.toString()));
+                		LoggerHelper.logDebug(MessageFormat.format("Checking whether the JDK compiler tools exist in: {0}", jdkPath.toString()));
 	                    if(jdkPath.toFile().exists()){
-	                    	LoggerHelper.logDebug(MessageFormat.format("JDK compiler tool was found in: {0}", sibling.getPath().toString()));
+	                    	LoggerHelper.logDebug(MessageFormat.format("The JDK 8 compiler tool was found in: {0}", sibling.getPath().toString()));
 	                        return sibling.getPath();
 	                    }
                 	} catch(Exception ex){
@@ -116,24 +117,26 @@ public class Environment {
     }
     
     private static boolean isJDK8(File file){
-    	LoggerHelper.logDebug(MessageFormat.format("Checking whether {0} contains JDK", file.getPath()));
+    	LoggerHelper.logDebug(MessageFormat.format("Checking whether {0} contains a JDK", file.getPath()));
     	String name = file.getName().toLowerCase();
         if(name.contains("1.8") && name.contains("jdk"))
             return true;
         if(name.contains("-8") && name.contains("jdk")) // Oracle JDK on Linux
             return true;
+        if(name.contains("java") && name.contains("-8-oracle")) // Oracle JDK on Linux
+            return true;        	
+        if(name.contains("java-8-oracle"))
+            return true;
         String osName = System.getProperty("os.name").toLowerCase();
         
-        if (osName.contains("nix")) {
-            if(name.contains("java") && name.contains("-8-oracle")) // Oracle JDK on Linux
-                return true;        	
-        }else if (osName.contains("mac")) {
+        if (osName.contains("mac")) {
         	String path = file.getPath().toLowerCase();
             if(path.contains("1.8") && path.contains("jdk")){
-            	LoggerHelper.logDebug(MessageFormat.format("Potential JDK locatoin found on Mac at: {0}", path));
+            	//LoggerHelper.logDebug(MessageFormat.format("Potential JDK location found on Mac at: {0}", path));
             	return true;
             }
         }
+    	LoggerHelper.logDebug(MessageFormat.format("{0} does not seem to contain a JDK", file.getPath()));
         return false;
     }
     

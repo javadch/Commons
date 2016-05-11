@@ -10,16 +10,18 @@ import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author jfd
+ * @author Javad Chamanara
  */
 public class LoggerHelper {
     private static final Logger logger = LoggerFactory.getLogger("XQtWorkbench");
+    
     public static void logDebug(String name, String message){
-        //Logger logger = LoggerFactory.getLogger(name);
-        logger.debug(message);
+        System.out.println(message);
+    	logger.debug(message);
     }
 
     public static void logDebug(String message){
+        System.out.println(message);
         logger.debug(message);
     }
 
