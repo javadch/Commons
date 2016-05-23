@@ -23,9 +23,10 @@ public class CommandExecutor {
     public List<String> locateJDK() {
         String JAVA_WINDOWS = "where javac";
         String JAVA_LINUX = "readlink -f $(whereis javac)"; // readlink -f $(which java)
-        String JAVA_MAC = "which javac";
+        //String JAVA_MAC = "ls -l `which javac`";
+        String JAVA_MAC = "/usr/libexec/java_home -v 1.8";
         String osName = System.getProperty("os.name").toLowerCase();
-        //osName = "nix"; // for simulating linux machine
+        //osName = "mac"; // for simulating a mac machine
         List<String> candidates = new ArrayList<>();
         if (osName.contains("win")) {
             //C:\Program Files\Java\jdk1.8.0\bin\javac.exe            
@@ -46,9 +47,12 @@ public class CommandExecutor {
                 candidates.add(path);
             }
         } else if(osName.contains("mac")){
+            //String commandResult = "lrwx-xr-x 1 root wheel 75 Jun 22 10:27 /usr/bin/javac -> /System/Library/Frameworks/JavaVM.framework/Versions/Current/Commands/javac"
+        	//String commandResult = "/Library/Java/JavaVirtualMachines/jdk1.8.0_66.jdk/Contents/Home /Library/Java/JavaVirtualMachines/jdk1.8.0_66.jdk/Contents/Home";        	
             String commandResult = executeCommand(JAVA_MAC);
-            commandResult = commandResult.substring(commandResult.indexOf("javac:"));
-            Pattern pattern = Pattern.compile("\\s*((?<path>\\/.*?\\/javac.*?)(\\s|$))", Pattern.CASE_INSENSITIVE );
+            if(commandResult.contains("Unable to finad any JVMs matching version"))
+            	return candidates;
+            Pattern pattern = Pattern.compile("((?<path>\\/.*?\\/Home))", Pattern.CASE_INSENSITIVE );
             Matcher matcher = pattern.matcher(commandResult);
             while(matcher.find()){
                 String path = matcher.group().trim();
