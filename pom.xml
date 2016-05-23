@@ -35,6 +35,9 @@
             <id>mac-profile</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
+                <os>
+                	<family>mac</family>
+            	</os>
                 <file>
                     <exists>${java.home}/../Classes/classes.jar</exists>
                 </file>
