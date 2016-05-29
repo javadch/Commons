@@ -32,4 +32,12 @@ public class FieldInfo {
     // its the object the field or the attribute is constructed from! usually it is a
     // PerspectiveAttribute but to keep the common library independent from the domain, its declared as an Object.
     public Object reference;
+    
+    public DataTypeQuality dataTypeQuality = DataTypeQuality.Inferred;
+    
+    public enum DataTypeQuality{
+    	Extracted, // type is explicitly extracted from the data container. higher quality level
+    	Enforced,  // type is set by a deterministic algorithm, mostly by analyzing perspectives and expressions
+    	Inferred,  // type is set by heuristics e.g., by default data types when reading from a data container...
+    }
 }

@@ -12,6 +12,9 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import javax.tools.Diagnostic;
+import javax.tools.DiagnosticCollector;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
@@ -25,16 +28,17 @@ public class ClassCompiler {
     private List<JavaFileObject> sources = new ArrayList<>();
     private JavaCompiler compiler;// = ToolProvider.getSystemJavaCompiler();
     private JavaFileManager fileManager;// = new InMemoryFileManager(compiler.getStandardFileManager(null, null, null));
+    private DiagnosticCollector<JavaFileObject> diagnosticsCollector = new DiagnosticCollector<JavaFileObject>();
     
     public ClassCompiler(ClassLoader parent) throws Exception{
         Environment.setJDK();
         
-        LoggerHelper.logDebug(MessageFormat.format("Checkpoint {0}: ClassCompiler.ctor. The compiler is istantiating...", 1));
+        LoggerHelper.logDebug(MessageFormat.format("Checkpoint {0}: ClassCompiler.ctor. The compiler is instantiating...", 1));
         try{
             compiler = ToolProvider.getSystemJavaCompiler();
             if(compiler != null){
-                fileManager = new InMemoryFileManager(compiler.getStandardFileManager(null, null, null), parent);
-                LoggerHelper.logDebug(MessageFormat.format("Checkpoint {0}: ClassCompiler.ctor. The compiler is istantiated", 2));
+                fileManager = new InMemoryFileManager(compiler.getStandardFileManager(diagnosticsCollector, null, null), parent);
+                LoggerHelper.logDebug(MessageFormat.format("Checkpoint {0}: ClassCompiler.ctor. The compiler is instantiated", 2));
             }else{
                 String message = MessageFormat.format("Not able to get the Java Compiler (using: ToolProvider.getSystemJavaCompiler())!", 2);
                 LoggerHelper.logError(message);                
@@ -66,12 +70,17 @@ public class ClassCompiler {
         compilerOptions.add("-Xlint:unchecked");
         Boolean compiled = compiler
                 //.getTask(null, fileManager, null, compilerOptions, classes, sources)
-        		.getTask(null, fileManager, null, null, classes, sources)
+        		.getTask(null, fileManager, diagnosticsCollector, null, classes, sources)
         		.call();
         if(compiled){
             LoggerHelper.logDebug(MessageFormat.format("Compiling the {0} source files was successfully done.", sources.size()));           
         }else{
-            LoggerHelper.logError(MessageFormat.format("Compiling the {0} source files has failed.", sources.size()));
+            LoggerHelper.logError(MessageFormat.format("Compiling the {0} source files failed.", sources.size()));
+            List<Diagnostic<? extends JavaFileObject>> diagnostics = diagnosticsCollector.getDiagnostics();
+            for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics) {
+                // read error details from the diagnostic object
+            	LoggerHelper.logError(diagnostic.getMessage(null));
+            }
         }
         return fileManager;
     }
