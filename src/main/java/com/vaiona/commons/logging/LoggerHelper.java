@@ -26,10 +26,12 @@ public class LoggerHelper {
     }
 
     public static void logError(String message){
+        System.out.println(message);
         logger.error(message);
     }
 
     public static void logInfo(String message){
+        System.out.println(message);
         logger.info(message);
     }
 }
