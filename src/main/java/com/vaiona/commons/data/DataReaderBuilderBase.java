@@ -83,7 +83,7 @@ public abstract class DataReaderBuilderBase {
 
     public Boolean hasAggregate(){
         // in this case the resultEntityAttributes is populated for the result set schema and rowEntityAttributes is for the first phase data reading ...
-        return rowEntityAttributes.size() > 0; 
+        return rowEntityAttributes.size() > 0 || (groupByAttributes.size() > 0); 
     }
 
     public DataReaderBuilderBase where(String whereClause, boolean isJoinMode) throws Exception{ 
@@ -377,7 +377,7 @@ public abstract class DataReaderBuilderBase {
                     translated = translated + " " + token;
                 }                                      
             } else {
-                // translate the wehre clause
+                // translate the where clause
                 if(resultEntityAttributes.containsKey(token)){
                     if(!isJoinMode)
                         translated = translated + " " + nonJoinPrefix + "." + token;
@@ -394,16 +394,20 @@ public abstract class DataReaderBuilderBase {
     
     public LinkedHashMap<String, InMemorySourceFile> createSources() throws IOException{
         // check if the statement has no adapter, throw an exception
-        String resultEntityString;
-        String rowEntityString;
-        String readerString;
-
         buildSharedSegments();
         if(this.joinType.equalsIgnoreCase("")){ // Single Source
             buildSingleSourceSegments();
         } else {
             buildJoinedSourceSegments();
         }
+        
+        return buildSources();
+    }    
+
+    protected LinkedHashMap<String, InMemorySourceFile> buildSources() throws IOException{
+        String resultEntityString;
+        String rowEntityString;
+        String readerString;
         rowEntityAttributes.entrySet().stream().map((entry) -> entry.getValue()).forEach((ad) -> {
             if(ad.joinSide.equalsIgnoreCase("R"))
                 ad.forwardMapTranslated = translate(ad, true);
@@ -417,7 +421,6 @@ public abstract class DataReaderBuilderBase {
             else
                 ad.forwardMapTranslated = translate(ad, false);
         });
-        
         LinkedHashMap<String, InMemorySourceFile> sources = new LinkedHashMap<>();
         ClassGenerator generator = new ClassGenerator();
         if(entityResourceName!= null && !entityResourceName.isEmpty()){
@@ -442,8 +445,7 @@ public abstract class DataReaderBuilderBase {
         rf.setFullName(namespace + "." + baseClassName + "Reader");
         sources.put(rf.getFullName(), rf); // the reader must be added first
         return sources;
-    }    
-
+    }
     protected void buildSharedSegments() {
         if(baseClassName == null || baseClassName.isEmpty()){
             //baseClassName = "C" + (new Date()).getTime(); // sometimes causes duplicate names
