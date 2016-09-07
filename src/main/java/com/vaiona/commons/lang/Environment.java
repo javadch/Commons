@@ -86,7 +86,7 @@ public class Environment {
                 // check the path itself
                 if(isJDK8(home)){
                 	Path jdkPath =Paths.get(home.getPath(), "lib", "tools.jar");
-            		LoggerHelper.logDebug(MessageFormat.format("Checking whether the JDK compiler tools exist in: {0}", jdkPath.toString()));
+            		LoggerHelper.logDebug(MessageFormat.format("Checking whether the JDK compiler tools exist at: {0}", jdkPath.toString()));
                     if(jdkPath.toFile().exists()){                
                     	LoggerHelper.logDebug(MessageFormat.format("The JDK 8 compiler tool was found in: {0}", home.getPath().toString()));
                         return home.getPath();
@@ -100,7 +100,7 @@ public class Environment {
                 for(File sibling: sibelings){
                 	try{
                 		Path jdkPath = Paths.get(sibling.getPath(), "lib", "tools.jar");
-                		LoggerHelper.logDebug(MessageFormat.format("Checking whether the JDK compiler tools exist in: {0}", jdkPath.toString()));
+                		LoggerHelper.logDebug(MessageFormat.format("Checking whether the JDK compiler tools exist at: {0}", jdkPath.toString()));
 	                    if(jdkPath.toFile().exists()){
 	                    	LoggerHelper.logDebug(MessageFormat.format("The JDK 8 compiler tool was found in: {0}", sibling.getPath().toString()));
 	                        return sibling.getPath();

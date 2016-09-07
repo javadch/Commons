@@ -327,7 +327,7 @@ public abstract class DataReaderBuilderBase {
                     // thw wehre clause is referring to an undefined attribute
                     // check if the token is one of the fields! then add it to the rowEntityAttributes...
                 }  
-                // translate the wehre clause
+                // translate the where clause
                 if(rowEntityAttributes.containsKey(token)){
                     if(!isJoinMode)
                         translated = translated + " " + "p." + token;
@@ -341,14 +341,11 @@ public abstract class DataReaderBuilderBase {
                 if (resultEntityAttributes.containsKey(token) && !referencedAttributes.containsKey(token)) {
                     referencedAttributes.put(token, resultEntityAttributes.get(token));
                 } else {
-                    // thw wehre clause is referring to an undefined attribute
+                    // the where clause is referring to an undefined attribute
                 }  
-                // translate the wehre clause
+                // translate the where clause
                 if(resultEntityAttributes.containsKey(token)){
-                    if(!isJoinMode)
-                        translated = translated + " " + "p." + token;
-                    else
-                        translated = translated + " " + "rowEntity." + token;
+                	translated = translated + " " + enhanceAttribute(token, isJoinMode, "rowEntity", "p");
                 }
                 else {
                     translated = translated + " " + token;
@@ -358,20 +355,28 @@ public abstract class DataReaderBuilderBase {
         return translated;
     }
         
-    public String enhanceExpression(String expression, boolean isJoinMode, String nonJoinPrefix, String joinPrefix) throws Exception {
+    /*
+     * Based on the join mode appends the token with a p or an entity prefix. The token is usually an attribute name.
+     * The method may be overridden by concrete adapters.
+     */
+    protected String enhanceAttribute(String token, boolean isJoinMode, String joinPrefix, String nonJoinPrefix) {
+        if(!isJoinMode)
+            return nonJoinPrefix + "." + token;
+        else
+            return joinPrefix + "." + token;
+	}
+
+	public String enhanceExpression(String expression, boolean isJoinMode, String nonJoinPrefix, String joinPrefix) throws Exception {
         String translated = "";
         for (StringTokenizer stringTokenizer = new StringTokenizer(expression, " ");
                 stringTokenizer.hasMoreTokens();) {
             String token = stringTokenizer.nextToken();
             if(hasAggregate()){
-                // non aggregate attributes apear in both row and result entities, so if an attribute apears in the result but not in the row 
+                // non aggregate attributes appear in both row and result entities, so if an attribute appears in the result but not in the row 
                 // entity, it is an aggregate attribute.
                 // translate the expression
                 if(rowEntityAttributes.containsKey(token)){
-                    if(!isJoinMode)
-                        translated = translated + " " + nonJoinPrefix + "." + token;
-                    else
-                        translated = translated + " " + joinPrefix + "." + token;
+                    translated = translated + " " + enhanceAttribute(token, isJoinMode, joinPrefix, nonJoinPrefix);
                 }
                 else {
                     translated = translated + " " + token;
@@ -379,10 +384,7 @@ public abstract class DataReaderBuilderBase {
             } else {
                 // translate the where clause
                 if(resultEntityAttributes.containsKey(token)){
-                    if(!isJoinMode)
-                        translated = translated + " " + nonJoinPrefix + "." + token;
-                    else
-                        translated = translated + " " + joinPrefix + "." + token;
+                    translated = translated + " " + enhanceAttribute(token, isJoinMode, joinPrefix, nonJoinPrefix);
                 }
                 else {
                     translated = translated + " " + token;

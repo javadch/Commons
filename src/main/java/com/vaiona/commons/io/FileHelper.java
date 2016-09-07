@@ -16,7 +16,21 @@ import java.text.MessageFormat;
  * @author Javad Chamanara <chamanara@gmail.com>
  */
 public class FileHelper {
-    // If the path is relative change it to a absolute one, based on the application execution location
+	
+	/*
+	 * If path1 is absolute, returns it, otherwise takes path2 as base and returns path2/path1
+	 */
+	public static String resolvePaths(String path1, String path2){
+		if (path1 == null || path1.length() <= 0)
+			return path2;
+		if (path2 == null || path2.length() <= 0)
+			return path1;
+		if(Paths.get(path1).isAbsolute())
+			return path1;
+		return Paths.get(path2, path1).toString();
+	}
+	
+    // If the path is relative, change it to a absolute one, based on the application execution location
     public static String makeAbsolute(String path) throws IOException{
         if((new File(path)).isAbsolute())
             return path;
